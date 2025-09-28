@@ -8,7 +8,7 @@ const LoadingSpinner = () => {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="fixed inset-0 bg-black flex justify-center items-center z-50"
+            className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex justify-center items-center z-50"
         >
             <div className="relative w-full h-full flex justify-center items-center">
                 {/* Left Arrow - বাম দিক থেকে আসবে */}
