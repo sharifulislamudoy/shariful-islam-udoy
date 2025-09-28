@@ -16,7 +16,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="overflow-hidden bg-black text-slate-50 min-h-screen">
+    <div className="overflow-hidden bg-black text-slate-50 min-h-screen my-20">
       <AnimatePresence mode="wait">
         {isLoading ? (
           <LoadingSpinner key="loading" />

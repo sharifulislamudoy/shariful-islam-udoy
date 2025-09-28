@@ -46,7 +46,7 @@ const Hero = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="min-h-screen flex flex-col lg:flex-row items-center justify-between px-6 md:px-12 lg:px-24 bg-gradient-to-br from-gray-900 via-black to-gray-900"
+      className="min-h-screen flex flex-col lg:flex-row items-center justify-between px-6 md:px-12 lg:px-24 bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20"
     >
       {/* Left Side - Content */}
       <motion.div
@@ -97,7 +97,7 @@ const Hero = () => {
           }}
           whileTap={{ scale: 0.95 }}
           onClick={downloadResume}
-          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-lg rounded-lg cursor-pointer flex items-center gap-3 font-semibold"
+          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-md rounded-lg cursor-pointer flex items-center gap-3 font-semibold"
         >
           <Download size={20} />
           Download Resume
@@ -127,7 +127,7 @@ const Hero = () => {
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="lg:w-1/2 w-full max-w-2xl"
+        className="lg:w-1/2 w-full max-w-2xl hidden md:block"
       >
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700">
           {/* VS Code Header */}

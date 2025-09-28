@@ -10,7 +10,7 @@ const LoadingSpinner = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex justify-center items-center z-50"
         >
-            <div className="relative w-full h-full flex justify-center items-center">
+            <div className="relative w-full h-full flex justify-center items-center ">
                 {/* Left Arrow - বাম দিক থেকে আসবে */}
                 <motion.div
                     initial={{ x: "-100vw", opacity: 0 }}
@@ -20,7 +20,23 @@ const LoadingSpinner = () => {
                         ease: "easeOut",
                         delay: 0.2
                     }}
-                    className="absolute text-6xl md:text-8xl text-blue-500 drop-shadow-lg z-20"
+                    className="absolute lg:hidden text-6xl md:text-8xl text-blue-500 drop-shadow-lg z-20"
+                    style={{ 
+                        textShadow: '0 0 15px #3b82f6, 0 0 30px #3b82f6',
+                        left: '30%'
+                    }}
+                >
+                    <IoIosArrowBack />
+                </motion.div>
+                <motion.div
+                    initial={{ x: "-100vw", opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{
+                        duration: 1.5,
+                        ease: "easeOut",
+                        delay: 0.2
+                    }}
+                    className="absolute hidden lg:flex text-6xl md:text-8xl text-blue-500 drop-shadow-lg z-20"
                     style={{ 
                         textShadow: '0 0 15px #3b82f6, 0 0 30px #3b82f6',
                         left: '40%'
@@ -38,10 +54,26 @@ const LoadingSpinner = () => {
                         ease: "easeOut",
                         delay: 0.2
                     }}
-                    className="absolute text-6xl md:text-8xl text-blue-500 drop-shadow-lg z-20"
+                    className="absolute hidden lg:flex text-6xl md:text-8xl text-blue-500 drop-shadow-lg z-20"
                     style={{ 
                         textShadow: '0 0 15px #3b82f6, 0 0 30px #3b82f6',
                         right: '40%'
+                    }}
+                >
+                    <IoIosArrowForward />
+                </motion.div>
+                <motion.div
+                    initial={{ x: "100vw", opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{
+                        duration: 1.5,
+                        ease: "easeOut",
+                        delay: 0.2
+                    }}
+                    className="absolute lg:hidden text-6xl md:text-8xl text-blue-500 drop-shadow-lg z-20"
+                    style={{ 
+                        textShadow: '0 0 15px #3b82f6, 0 0 30px #3b82f6',
+                        right: '30%'
                     }}
                 >
                     <IoIosArrowForward />
