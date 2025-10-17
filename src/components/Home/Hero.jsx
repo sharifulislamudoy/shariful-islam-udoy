@@ -10,6 +10,9 @@ const Hero = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [typingMessage, setTypingMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [currentTypingId, setCurrentTypingId] = useState(null);
   const chatEndRef = useRef(null);
 
   const roles = [
@@ -31,10 +34,11 @@ const Hero = () => {
     role: "Full Stack Developer",
     skills: ["React.js", "Next.js", "Node.js", "MongoDB", "Express.js", "Redux Toolkit", "TypeScript", "Tailwind CSS"],
     experience: "2+ years",
-    education: "BSc in Mathematics",
+    education: "BSc in Mathematics (Dhaka College)",
     location: "Bangladesh",
     email: "sharifulislamudoy56@gmail.com",
     phone: "+880 19953 22033",
+    whatsapp: "https://wa.me/8801995322033",
     projects: [
       "E-commerce platform with MERN stack",
       "Real-time chat application",
@@ -48,27 +52,113 @@ const Hero = () => {
     social: {
       github: "https://github.com/sharifulislamudoy",
       linkedin: "https://linkedin.com/in/sharifulislamudoy",
-      portfolio: "https://yourportfolio.com", // Update with your actual portfolio
-      facebook: "https://www.facebook.com/sharifulislamudoy56/"
+      portfolio: "https://yourportfolio.com",
+      facebook: "https://www.facebook.com/sharifulislamudoy56/",
+      fiverr: "https://www.fiverr.com/sharifulislam_u"
     }
+  };
+
+  // Improved function to render text with clickable links and emails
+  const renderTextWithEmailAndLinks = (text) => {
+    if (!text) return null;
+
+    // Regular expressions for different types of links
+    const urlRegex = /(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])/g;
+    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+    
+    // Split by both URLs and emails while preserving the delimiters
+    const parts = text.split(/(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])|([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+    
+    return parts.map((part, index) => {
+      if (!part) return null;
+      
+      // Check if part is a URL
+      if (part.match(urlRegex)) {
+        const url = part.trim();
+        // Extract platform name from URL for better display
+        let platformName = 'Link';
+        if (url.includes('github.com')) platformName = 'GitHub';
+        else if (url.includes('linkedin.com')) platformName = 'LinkedIn';
+        else if (url.includes('facebook.com')) platformName = 'Facebook';
+        else if (url.includes('fiverr.com')) platformName = 'Fiverr';
+        else if (url.includes('yourportfolio.com') || url.includes('portfolio')) platformName = 'Portfolio';
+        else if (url.includes('wa.me')) platformName = 'WhatsApp';
+        
+        return (
+          <a
+            key={index}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {platformName}
+          </a>
+        );
+      } 
+      // Check if part is an email
+      else if (part.match(emailRegex)) {
+        return (
+          <a
+            key={index}
+            href={`mailto:${part}`}
+            className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Email
+          </a>
+        );
+      }
+      // Regular text
+      return part;
+    });
+  };
+
+  // Function to simulate typing effect for bot messages
+  const typeMessage = (message, messageId, callback) => {
+    setIsTyping(true);
+    setCurrentTypingId(messageId);
+    setTypingMessage('');
+    let index = 0;
+    
+    const typingInterval = setInterval(() => {
+      if (index < message.length) {
+        setTypingMessage(prev => prev + message.charAt(index));
+        index++;
+      } else {
+        clearInterval(typingInterval);
+        setIsTyping(false);
+        setCurrentTypingId(null);
+        if (callback) callback();
+      }
+    }, 20); // Adjust typing speed here (lower = faster)
   };
 
   // Initial bot message
   useEffect(() => {
-    setChatMessages([
-      {
-        id: 1,
-        text: `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, and more! What would you like to know about him?`,
-        isBot: true,
-        timestamp: new Date()
-      }
-    ]);
+    const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, and more! What would you like to know about him?`;
+    const initialMessageId = 1;
+    
+    // Start typing the initial message immediately
+    typeMessage(initialMessage, initialMessageId, () => {
+      // After typing is complete, add the message to chat
+      setChatMessages([
+        {
+          id: initialMessageId,
+          text: initialMessage,
+          isBot: true,
+          timestamp: new Date()
+        }
+      ]);
+      setTypingMessage('');
+    });
   }, []);
 
   // Scroll to bottom of chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
+  }, [chatMessages, typingMessage]);
 
   // Typing animation for roles
   useEffect(() => {
@@ -98,7 +188,7 @@ const Hero = () => {
   };
 
   const sendMessage = async () => {
-    if (!userInput.trim() || isLoading) return;
+    if (!userInput.trim() || isLoading || isTyping) return;
 
     const userMessage = {
       id: Date.now(),
@@ -126,6 +216,7 @@ const Hero = () => {
       - Location: ${developerInfo.location}
       - Email: ${developerInfo.email}
       - Phone: ${developerInfo.phone}
+      - WhatsApp: ${developerInfo.whatsapp}
       - Projects: ${developerInfo.projects.join(', ')}
       - Programming Languages: ${developerInfo.languages.join(', ')}
       - Tools: ${developerInfo.tools.join(', ')}
@@ -135,7 +226,24 @@ const Hero = () => {
         * GitHub: ${developerInfo.social.github}
         * LinkedIn: ${developerInfo.social.linkedin}
         * Facebook: ${developerInfo.social.facebook}
+        * Fiverr: ${developerInfo.social.fiverr}
         * Portfolio: ${developerInfo.social.portfolio}
+
+      IMPORTANT FORMATTING INSTRUCTIONS:
+      - When mentioning URLs or emails, ALWAYS include the full URL or email address in your response
+      - For GitHub, always include: ${developerInfo.social.github}
+      - For LinkedIn, always include: ${developerInfo.social.linkedin}
+      - For Facebook, always include: ${developerInfo.social.facebook}
+      - For Fiverr, always include: ${developerInfo.social.fiverr}
+      - For Portfolio, always include: ${developerInfo.social.portfolio}
+      - For Email, always include: ${developerInfo.email}
+      - For WhatsApp, always include: ${developerInfo.whatsapp}
+
+      CRITICAL URL FORMATTING:
+      - When including URLs in your response, make sure they are separated by spaces and don't include trailing commas or periods
+      - Example: "You can find me on GitHub at ${developerInfo.social.github} and LinkedIn at ${developerInfo.social.linkedin}"
+      - BAD: "Visit ${developerInfo.social.github}, and ${developerInfo.social.linkedin}."
+      - GOOD: "Visit ${developerInfo.social.github} and ${developerInfo.social.linkedin}"
 
       Answer questions about Udoy professionally and helpfully. Keep responses concise but informative (2-4 sentences). 
       Be enthusiastic but professional. If asked about something not in the provided information, politely redirect to what you can discuss.
@@ -144,7 +252,8 @@ const Hero = () => {
       - "I specialize in MERN stack development and have built several projects including..."
       - "My experience includes 2+ years working with React and Node.js..."
       - "I'm currently available for freelance projects and would love to discuss opportunities..."
-      - "You can find me on GitHub at ${developerInfo.social.github} and LinkedIn at ${developerInfo.social.linkedin}"`;
+      - "You can find me on GitHub at ${developerInfo.social.github} and LinkedIn at ${developerInfo.social.linkedin}"
+      - "I studied at Dhaka College and completed my BSc in Mathematics there."`;
 
       const completion = await groq.chat.completions.create({
         messages: [
@@ -163,27 +272,41 @@ const Hero = () => {
         stream: false
       });
 
-      const botMessage = {
-        id: Date.now() + 1,
-        text: completion.choices[0]?.message?.content || "I apologize, but I'm having trouble responding right now. Please check out my resume for more information!",
-        isBot: true,
-        timestamp: new Date()
-      };
+      const botResponse = completion.choices[0]?.message?.content || "I apologize, but I'm having trouble responding right now. Please check out my resume for more information!";
+      const botMessageId = Date.now() + 1;
+      
+      // Start typing the bot response immediately
+      typeMessage(botResponse, botMessageId, () => {
+        // After typing is complete, add the message to chat
+        const botMessage = {
+          id: botMessageId,
+          text: botResponse,
+          isBot: true,
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, botMessage]);
+        setTypingMessage('');
+        setIsLoading(false);
+      });
 
-      setChatMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error calling Groq API:', error);
       
-      const errorMessage = {
-        id: Date.now() + 1,
-        text: "I'm sorry, I'm having trouble connecting right now. Please try again later or check out my resume for more information!",
-        isBot: true,
-        timestamp: new Date()
-      };
+      const errorResponse = "I'm sorry, I'm having trouble connecting right now. Please try again later or check out my resume for more information!";
+      const errorMessageId = Date.now() + 1;
       
-      setChatMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
+      // Start typing the error message immediately
+      typeMessage(errorResponse, errorMessageId, () => {
+        const errorMessage = {
+          id: errorMessageId,
+          text: errorResponse,
+          isBot: true,
+          timestamp: new Date()
+        };
+        setChatMessages(prev => [...prev, errorMessage]);
+        setTypingMessage('');
+        setIsLoading(false);
+      });
     }
   };
 
@@ -200,7 +323,8 @@ const Hero = () => {
     "Tell me about your experience",
     "What projects have you worked on?",
     "Are you available for work?",
-    "What are your social media links?"
+    "What are your social media links?",
+    "Where did you study?"
   ];
 
   const handleQuickQuestion = (question) => {
@@ -254,7 +378,7 @@ const Hero = () => {
         >
           Passionate about creating innovative web solutions using modern technologies. 
           Specializing in MongoDB, Express.js, React.js, Node.js, and Next.js to build 
-          scalable and performant applications.
+          scalable and performant applications. Currently studying Mathematics at Dhaka College.
         </motion.p>
         
         <motion.button
@@ -291,52 +415,6 @@ const Hero = () => {
           ))}
         </motion.div>
 
-        {/* Social Links */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.4 }}
-          className="flex gap-6 mt-8"
-        >
-          {[
-            { 
-              name: "GitHub", 
-              url: developerInfo.social.github, 
-              color: "hover:text-white",
-              icon: "🐱"
-            },
-            { 
-              name: "LinkedIn", 
-              url: developerInfo.social.linkedin, 
-              color: "hover:text-blue-400",
-              icon: "💼"
-            },
-            { 
-              name: "Facebook", 
-              url: developerInfo.social.facebook, 
-              color: "hover:text-blue-500",
-              icon: "👤"
-            },
-            { 
-              name: "Portfolio", 
-              url: developerInfo.social.portfolio, 
-              color: "hover:text-cyan-400",
-              icon: "🌐"
-            }
-          ].map((social, index) => (
-            <motion.a
-              key={social.name}
-              href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.1, y: -2 }}
-              className={`text-gray-400 ${social.color} transition-colors flex items-center gap-2 text-sm font-medium`}
-            >
-              <span className="text-lg">{social.icon}</span>
-              {social.name}
-            </motion.a>
-          ))}
-        </motion.div>
       </motion.div>
 
       {/* Right Side - Chatbot */}
@@ -384,7 +462,9 @@ const Hero = () => {
                     ? 'bg-gray-800 text-gray-200 rounded-tl-none' 
                     : 'bg-blue-600 text-white rounded-tr-none'
                 }`}>
-                  <p className="text-sm leading-relaxed">{message.text}</p>
+                  <p className="text-sm leading-relaxed">
+                    {message.isBot ? renderTextWithEmailAndLinks(message.text) : message.text}
+                  </p>
                   <div className={`text-xs mt-1 ${
                     message.isBot ? 'text-gray-400' : 'text-blue-200'
                   }`}>
@@ -394,7 +474,27 @@ const Hero = () => {
               </motion.div>
             ))}
             
-            {isLoading && (
+            {/* Typing Indicator - Shows real-time typing with first character immediately */}
+            {isTyping && typingMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex gap-3"
+              >
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                  <Bot size={16} />
+                </div>
+                <div className="bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-[80%]">
+                  <p className="text-sm leading-relaxed text-gray-200">
+                    {renderTextWithEmailAndLinks(typingMessage)}
+                    <span className="animate-pulse">|</span>
+                  </p>
+                </div>
+              </motion.div>
+            )}
+            
+            {/* Loading Indicator - Only shows when waiting for API response */}
+            {isLoading && !isTyping && (
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                   <Bot size={16} />
@@ -413,7 +513,7 @@ const Hero = () => {
           </div>
 
           {/* Quick Questions */}
-          {chatMessages.length <= 2 && (
+          {chatMessages.length <= 2 && !isTyping && (
             <div className="px-4 py-2 border-t border-gray-800">
               <div className="text-xs text-gray-400 mb-2">Quick questions:</div>
               <div className="flex flex-wrap gap-2">
@@ -440,11 +540,11 @@ const Hero = () => {
                 onKeyPress={handleKeyPress}
                 placeholder="Ask about my skills, experience, projects..."
                 className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                disabled={isLoading}
+                disabled={isLoading || isTyping}
               />
               <button
                 onClick={sendMessage}
-                disabled={isLoading || !userInput.trim()}
+                disabled={isLoading || isTyping || !userInput.trim()}
                 className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg px-6 py-3 transition-colors flex items-center gap-2"
               >
                 <Send size={16} />
