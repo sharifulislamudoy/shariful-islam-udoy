@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Hero from '../components/Home/Hero';
+import AboutMe from '../components/Home/AboutMe';
+
 
 
 const Home = () => {
@@ -21,7 +23,10 @@ const Home = () => {
         {isLoading ? (
           <LoadingSpinner key="loading" />
         ) : (
-          <Hero key="hero" />
+          <>
+            <Hero key="hero" />
+            <AboutMe key="about"/>
+          </>
         )}
       </AnimatePresence>
     </div>

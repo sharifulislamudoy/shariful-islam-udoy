@@ -13,11 +13,14 @@ const Hero = () => {
   const [typingMessage, setTypingMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [currentTypingId, setCurrentTypingId] = useState(null);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const chatEndRef = useRef(null);
+  const chatContainerRef = useRef(null); // Chat container এর ref
+  const heroRef = useRef(null);
 
   const roles = [
     "MERN Stack Developer",
-    "Next.js Developer", 
+    "Next.js Developer",
     "Full Stack Developer",
     "React.js Specialist"
   ];
@@ -65,13 +68,13 @@ const Hero = () => {
     // Regular expressions for different types of links
     const urlRegex = /(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])/g;
     const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
-    
+
     // Split by both URLs and emails while preserving the delimiters
     const parts = text.split(/(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])|([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
-    
+
     return parts.map((part, index) => {
       if (!part) return null;
-      
+
       // Check if part is a URL
       if (part.match(urlRegex)) {
         const url = part.trim();
@@ -83,7 +86,7 @@ const Hero = () => {
         else if (url.includes('fiverr.com')) platformName = 'Fiverr';
         else if (url.includes('yourportfolio.com') || url.includes('portfolio')) platformName = 'Portfolio';
         else if (url.includes('wa.me')) platformName = 'WhatsApp';
-        
+
         return (
           <a
             key={index}
@@ -96,7 +99,7 @@ const Hero = () => {
             {platformName}
           </a>
         );
-      } 
+      }
       // Check if part is an email
       else if (part.match(emailRegex)) {
         return (
@@ -121,49 +124,66 @@ const Hero = () => {
     setCurrentTypingId(messageId);
     setTypingMessage('');
     let index = 0;
-    
+
     const typingInterval = setInterval(() => {
       if (index < message.length) {
         setTypingMessage(prev => prev + message.charAt(index));
         index++;
+        
+        // Scroll to bottom during typing
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
       } else {
         clearInterval(typingInterval);
         setIsTyping(false);
         setCurrentTypingId(null);
         if (callback) callback();
       }
-    }, 20); // Adjust typing speed here (lower = faster)
+    }, 20);
   };
 
-  // Initial bot message
+  // Scroll to top when component mounts
   useEffect(() => {
-    const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, and more! What would you like to know about him?`;
-    const initialMessageId = 1;
-    
-    // Start typing the initial message immediately
-    typeMessage(initialMessage, initialMessageId, () => {
-      // After typing is complete, add the message to chat
-      setChatMessages([
-        {
-          id: initialMessageId,
-          text: initialMessage,
-          isBot: true,
-          timestamp: new Date()
-        }
-      ]);
-      setTypingMessage('');
-    });
+    window.scrollTo(0, 0);
   }, []);
 
-  // Scroll to bottom of chat
+  // Initial bot message - delayed start
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (hasInitialized) return;
+
+    const timer = setTimeout(() => {
+      const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, and more! What would you like to know about him?`;
+      const initialMessageId = 1;
+
+      typeMessage(initialMessage, initialMessageId, () => {
+        setChatMessages([
+          {
+            id: initialMessageId,
+            text: initialMessage,
+            isBot: true,
+            timestamp: new Date()
+          }
+        ]);
+        setTypingMessage('');
+        setHasInitialized(true);
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [hasInitialized]);
+
+  // Scroll to bottom of chat - ONLY within chat container
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [chatMessages, typingMessage]);
 
   // Typing animation for roles
   useEffect(() => {
     const currentRoleText = roles[currentRole];
-    
+
     if (currentIndex < currentRoleText.length) {
       const timer = setTimeout(() => {
         setDisplayText(currentRoleText.slice(0, currentIndex + 1));
@@ -274,10 +294,8 @@ const Hero = () => {
 
       const botResponse = completion.choices[0]?.message?.content || "I apologize, but I'm having trouble responding right now. Please check out my resume for more information!";
       const botMessageId = Date.now() + 1;
-      
-      // Start typing the bot response immediately
+
       typeMessage(botResponse, botMessageId, () => {
-        // After typing is complete, add the message to chat
         const botMessage = {
           id: botMessageId,
           text: botResponse,
@@ -291,11 +309,10 @@ const Hero = () => {
 
     } catch (error) {
       console.error('Error calling Groq API:', error);
-      
+
       const errorResponse = "I'm sorry, I'm having trouble connecting right now. Please try again later or check out my resume for more information!";
       const errorMessageId = Date.now() + 1;
-      
-      // Start typing the error message immediately
+
       typeMessage(errorResponse, errorMessageId, () => {
         const errorMessage = {
           id: errorMessageId,
@@ -329,7 +346,6 @@ const Hero = () => {
 
   const handleQuickQuestion = (question) => {
     setUserInput(question);
-    // Auto-send after a brief delay
     setTimeout(() => {
       sendMessage();
     }, 100);
@@ -337,6 +353,8 @@ const Hero = () => {
 
   return (
     <motion.section
+      id="home"
+      ref={heroRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
@@ -359,7 +377,7 @@ const Hero = () => {
             Shariful Islam Udoy
           </span>
         </motion.h1>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -369,23 +387,23 @@ const Hero = () => {
           <span className="text-blue-400">{displayText}</span>
           <span className="animate-pulse">|</span>
         </motion.div>
-        
+
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
           className="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed max-w-2xl"
         >
-          Passionate about creating innovative web solutions using modern technologies. 
-          Specializing in MongoDB, Express.js, React.js, Node.js, and Next.js to build 
+          Passionate about creating innovative web solutions using modern technologies.
+          Specializing in MongoDB, Express.js, React.js, Node.js, and Next.js to build
           scalable and performant applications. Currently studying Mathematics at Dhaka College.
         </motion.p>
-        
+
         <motion.button
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          whileHover={{ 
+          whileHover={{
             scale: 1.05,
             boxShadow: '0 0 30px rgba(59, 130, 246, 0.3)',
           }}
@@ -432,19 +450,18 @@ const Hero = () => {
             <div className="text-gray-200 text-sm font-semibold">Udoy's AI Assistant</div>
             <div className="ml-auto text-xs text-gray-400">Online</div>
           </div>
-          
-          {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 
-            /* Scrollbar Styling for Webkit Browsers */
-            scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800
-            /* Hide scrollbar for non-Webkit browsers */
-            scrollbar-none
-            /* Custom scrollbar hiding */
-            [&::-webkit-scrollbar]:w-2
-            [&::-webkit-scrollbar-track]:bg-gray-800
-            [&::-webkit-scrollbar-thumb]:bg-gray-600
-            [&::-webkit-scrollbar-thumb]:rounded-full
-            [&::-webkit-scrollbar-thumb]:hover:bg-gray-500">
+
+          {/* Chat Messages - Now with proper ref */}
+          <div 
+            ref={chatContainerRef}
+            className="flex-1 overflow-y-auto p-4 space-y-4 
+              scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800
+              [&::-webkit-scrollbar]:w-2
+              [&::-webkit-scrollbar-track]:bg-gray-800
+              [&::-webkit-scrollbar-thumb]:bg-gray-600
+              [&::-webkit-scrollbar-thumb]:rounded-full
+              [&::-webkit-scrollbar-thumb]:hover:bg-gray-500"
+          >
             {chatMessages.map((message) => (
               <motion.div
                 key={message.id}
@@ -452,29 +469,26 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className={`flex gap-3 ${message.isBot ? '' : 'flex-row-reverse'}`}
               >
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                  message.isBot ? 'bg-green-500' : 'bg-blue-500'
-                }`}>
+                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.isBot ? 'bg-green-500' : 'bg-blue-500'
+                  }`}>
                   {message.isBot ? <Bot size={16} /> : <User size={16} />}
                 </div>
-                <div className={`max-w-[80%] rounded-lg p-3 ${
-                  message.isBot 
-                    ? 'bg-gray-800 text-gray-200 rounded-tl-none' 
+                <div className={`max-w-[80%] rounded-lg p-3 ${message.isBot
+                    ? 'bg-gray-800 text-gray-200 rounded-tl-none'
                     : 'bg-blue-600 text-white rounded-tr-none'
-                }`}>
+                  }`}>
                   <p className="text-sm leading-relaxed">
                     {message.isBot ? renderTextWithEmailAndLinks(message.text) : message.text}
                   </p>
-                  <div className={`text-xs mt-1 ${
-                    message.isBot ? 'text-gray-400' : 'text-blue-200'
-                  }`}>
+                  <div className={`text-xs mt-1 ${message.isBot ? 'text-gray-400' : 'text-blue-200'
+                    }`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               </motion.div>
             ))}
-            
-            {/* Typing Indicator - Shows real-time typing with first character immediately */}
+
+            {/* Typing Indicator */}
             {isTyping && typingMessage && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -492,8 +506,8 @@ const Hero = () => {
                 </div>
               </motion.div>
             )}
-            
-            {/* Loading Indicator - Only shows when waiting for API response */}
+
+            {/* Loading Indicator */}
             {isLoading && !isTyping && (
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
@@ -508,7 +522,7 @@ const Hero = () => {
                 </div>
               </div>
             )}
-            
+
             <div ref={chatEndRef} />
           </div>
 

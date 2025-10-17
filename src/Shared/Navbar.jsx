@@ -23,19 +23,31 @@ const Navbar = () => {
 
     const handleSectionChange = () => {
       const sections = navItems.map(item => item.href.substring(1));
+      
+      // Calculate the offset considering navbar height
+      const navbarHeight = 80; // Approximate navbar height in pixels
+      const offset = navbarHeight + 20; // Additional 20px buffer
+      
       const current = sections.find(section => {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+          // Check if element is in viewport with offset
+          return rect.top <= offset && rect.bottom >= offset;
         }
         return false;
       });
-      if (current) setActiveSection(current);
+      
+      if (current) {
+        setActiveSection(current);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('scroll', handleSectionChange);
+    
+    // Initial check on mount
+    handleSectionChange();
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -46,7 +58,14 @@ const Navbar = () => {
   const scrollToSection = (href) => {
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const navbarHeight = 80; // Same as in handleSectionChange
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
     setIsMobileMenuOpen(false);
   };
