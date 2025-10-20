@@ -5,6 +5,7 @@ import Hero from '../components/Home/Hero';
 import AboutMe from '../components/Home/AboutMe';
 import Skills from '../components/Home/Skills';
 import Experience from '../components/Home/Experience';
+import Projects from '../components/Home/Projects';
 
 
 
@@ -29,6 +30,7 @@ const Home = () => {
             <Hero key="hero" />
             <AboutMe key="about"/>
             <Skills key="skills" />
+            <Projects key="projects" />
             <Experience key="experience" />
           </>
         )}
