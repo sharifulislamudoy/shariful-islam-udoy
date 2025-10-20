@@ -6,6 +6,7 @@ import AboutMe from '../components/Home/AboutMe';
 import Skills from '../components/Home/Skills';
 import Experience from '../components/Home/Experience';
 import Projects from '../components/Home/Projects';
+import Education from '../components/Home/Education';
 
 
 
@@ -32,6 +33,7 @@ const Home = () => {
             <Skills key="skills" />
             <Projects key="projects" />
             <Experience key="experience" />
+            <Education key="education" />
           </>
         )}
       </AnimatePresence>

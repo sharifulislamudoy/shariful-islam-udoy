@@ -54,7 +54,7 @@ const Hero = () => {
     hobbies: ["Coding", "Learning new technologies", "Open source contributions"],
     social: {
       github: "https://github.com/sharifulislamudoy",
-      linkedin: "https://linkedin.com/in/sharifulislamudoy",
+      linkedin: "https://linkedin.com/in/shariful-islam-udoy",
       portfolio: "https://yourportfolio.com",
       facebook: "https://www.facebook.com/sharifulislamudoy56/",
       fiverr: "https://www.fiverr.com/sharifulislam_u"
