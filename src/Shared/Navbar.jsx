@@ -11,6 +11,7 @@ const Navbar = () => {
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
     { name: 'Skills', href: '#skills' },
+    { name: 'Projects', href: '#projects' },
     { name: 'Experience', href: '#experience' },
     { name: 'Education', href: '#education' },
     { name: 'Contact Me', href: '#contact' }
@@ -78,7 +79,7 @@ const Navbar = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
           ? 'bg-transparent backdrop-blur-md border-b border-gray-800 shadow-2xl' 
-          : 'bg-gradient-to-br from-gray-900 via-black to-gray-900/95 backdrop-blur-sm'
+          : 'bg-gradient-to-lr from-gray-900 via-black to-gray-900/95 backdrop-blur-sm'
       }`}
     >
       <div className="w-11/12 mx-auto px-2 lg:px-12">

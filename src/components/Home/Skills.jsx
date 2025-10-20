@@ -2,17 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
-    Code,
-    Database,
     Server,
-    Palette,
-    Globe,
-    Smartphone,
     Cpu,
-    GitBranch,
-    Cloud,
-    Shield,
-    Zap,
     Layout
 } from 'lucide-react';
 
@@ -104,9 +95,9 @@ const Skills = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.6 }}
-                        className="text-3xl md:text-4xl font-bold mb-4"
+                        className="text-4xl md:text-5xl font-bold mb-4"
                     >
-                        <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                             Technical Skills
                         </span>
                     </motion.h2>
@@ -122,7 +113,7 @@ const Skills = () => {
                         initial={{ opacity: 0, width: 0 }}
                         animate={inView ? { opacity: 1, width: 80 } : {}}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="h-1 bg-gradient-to-r from-green-500 to-emerald-500 mx-auto rounded-full w-20 mt-4"
+                        className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full w-20 mt-4"
                     />
                 </motion.div>
 

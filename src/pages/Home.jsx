@@ -4,6 +4,7 @@ import LoadingSpinner from '../Shared/LoadingSpinner';
 import Hero from '../components/Home/Hero';
 import AboutMe from '../components/Home/AboutMe';
 import Skills from '../components/Home/Skills';
+import Experience from '../components/Home/Experience';
 
 
 
@@ -28,6 +29,7 @@ const Home = () => {
             <Hero key="hero" />
             <AboutMe key="about"/>
             <Skills key="skills" />
+            <Experience key="experience" />
           </>
         )}
       </AnimatePresence>
