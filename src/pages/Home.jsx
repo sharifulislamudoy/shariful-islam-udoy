@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Hero from '../components/Home/Hero';
 import AboutMe from '../components/Home/AboutMe';
+import Skills from '../components/Home/Skills';
 
 
 
@@ -26,6 +27,7 @@ const Home = () => {
           <>
             <Hero key="hero" />
             <AboutMe key="about"/>
+            <Skills key="skills" />
           </>
         )}
       </AnimatePresence>
