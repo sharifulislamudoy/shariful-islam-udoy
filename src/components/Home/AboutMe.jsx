@@ -257,27 +257,6 @@ const AboutMe = () => {
                                 <span>+880 19953 22033</span>
                             </motion.div>
                         </motion.div>
-
-                        {/* Stats */}
-                        <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {stats.map((stat, index) => (
-                                <motion.div
-                                    key={stat.label}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={inView ? { opacity: 1, y: 0 } : {}}
-                                    transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                                    whileHover={{
-                                        scale: 1.05,
-                                        y: -5
-                                    }}
-                                    className="text-center p-4 bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-700"
-                                >
-                                    <stat.icon className="mx-auto text-blue-400 mb-2" size={24} />
-                                    <div className="text-2xl font-bold text-white">{stat.value}</div>
-                                    <div className="text-sm text-gray-400">{stat.label}</div>
-                                </motion.div>
-                            ))}
-                        </motion.div>
                     </motion.div>
                 </div>
             </div>
