@@ -101,6 +101,12 @@ const Skills = () => {
                             Technical Skills
                         </span>
                     </motion.h2>
+                    <motion.div
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={inView ? { opacity: 1, width: 80 } : {}}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full w-20 mt-4"
+                    />
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -109,12 +115,6 @@ const Skills = () => {
                     >
                         Technologies and tools I work with to create amazing digital experiences
                     </motion.p>
-                    <motion.div
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={inView ? { opacity: 1, width: 80 } : {}}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full w-20 mt-4"
-                    />
                 </motion.div>
 
                 {/* Skills Grid */}
@@ -131,7 +131,7 @@ const Skills = () => {
                         >
                             {/* Background Glow */}
                             <div className={`absolute inset-0 bg-gradient-to-br ${category.color} rounded-2xl blur-lg opacity-20 group-hover:opacity-30 transition-opacity duration-300`} />
-                            
+
                             {/* Card */}
                             <div className="relative bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 group-hover:border-gray-600 transition-all duration-300 h-full">
                                 {/* Icon */}
