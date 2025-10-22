@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
@@ -19,44 +19,21 @@ const Experience = () => {
         triggerOnce: true
     });
 
-    const experiences = [
-        {
-            id: 1,
-            title: "Full Stack Developer",
-            company: "My Own Cricket Team",
-            period: "2025 - Present",
-            location: "Dhaka, Bangladesh",
-            type: "Full-time",
-            description: "Developing and maintaining web applications using React, Node.js, and MongoDB. Leading a team of 3 developers on client projects.",
-            technologies: ["React", "Node.js", "MongoDB", "TypeScript"],
-            icon: Code,
-            achievements: ["Improved performance by 40%", "Led 5+ successful projects"]
-        },
-        {
-            id: 2,
-            title: "Frontend Developer",
-            company: "Digital Creations",
-            period: "2022 - 2023",
-            location: "Remote",
-            type: "Contract",
-            description: "Built responsive web applications and collaborated with UX designers to implement pixel-perfect designs.",
-            technologies: ["React", "Next.js", "Tailwind CSS", "Framer Motion"],
-            icon: Palette,
-            achievements: ["Delivered 10+ projects", "99% client satisfaction"]
-        },
-        {
-            id: 3,
-            title: "Backend Developer",
-            company: "Data Systems Ltd.",
-            period: "2021 - 2022",
-            location: "Dhaka, Bangladesh",
-            type: "Internship",
-            description: "Developed RESTful APIs and database schemas. Worked on authentication systems and data processing.",
-            technologies: ["Node.js", "Express", "MongoDB", "JWT"],
-            icon: Database,
-            achievements: ["Built 15+ APIs", "Reduced latency by 30%"]
-        },
-    ];
+    const [experiences, setExperiences] = useState([]);
+
+    useEffect(() => {
+        fetchExperiences();
+    }, []);
+
+    const fetchExperiences = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/experiences');
+            const data = await response.json();
+            setExperiences(data);
+        } catch (error) {
+            console.error('Error fetching experiences:', error);
+        }
+    };
 
     const containerVariants = {
         hidden: { opacity: 0 },

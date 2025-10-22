@@ -19,7 +19,10 @@ const MessageButton = () => {
     const [conversationId, setConversationId] = useState(null);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
     const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
     const [pendingMessageId, setPendingMessageId] = useState(null);
+    const [isTyping, setIsTyping] = useState(false);
+    const [typingTimeout, setTypingTimeout] = useState(null);
 
     // Generate unique ID for messages
     const generateMessageId = () => {
@@ -98,6 +101,8 @@ const MessageButton = () => {
         });
 
         socket.on('message_received', (data) => {
+            console.log('📨 Message received:', data);
+            
             // Check if this is our own pending message
             if (data.clientMessageId === pendingMessageId) {
                 // Update the pending message with the server data
@@ -146,6 +151,10 @@ const MessageButton = () => {
             setCurrentView('chat');
         });
 
+        socket.on('admin_typing', (data) => {
+            setIsTyping(data.isTyping);
+        });
+
         socket.on('error', (error) => {
             setError(error.message);
             setIsLoadingMessages(false);
@@ -157,6 +166,7 @@ const MessageButton = () => {
             socket.off('message_received');
             socket.off('conversation_history');
             socket.off('conversation_started');
+            socket.off('admin_typing');
             socket.off('error');
         };
     }, [socket, pendingMessageId]);
@@ -171,7 +181,38 @@ const MessageButton = () => {
     // Auto-scroll to bottom of messages
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+    }, [messages, isTyping]);
+
+    // Handle typing indicator
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setNewMessage(value);
+
+        if (socket && conversationId) {
+            // Clear existing timeout
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+            }
+
+            // Emit typing start if there's text
+            if (value.trim()) {
+                socket.emit('typing', {
+                    conversationId,
+                    isTyping: true
+                });
+            }
+
+            // Set timeout to stop typing indicator
+            const timeout = setTimeout(() => {
+                socket.emit('typing', {
+                    conversationId,
+                    isTyping: false
+                });
+            }, 1000);
+
+            setTypingTimeout(timeout);
+        }
+    };
 
     // Load messages from database
     const loadConversationMessages = async (conversationId) => {
@@ -203,7 +244,7 @@ const MessageButton = () => {
         }
     };
 
-    const handleInputChange = (e) => {
+    const handleFormInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -261,6 +302,17 @@ const MessageButton = () => {
         e.preventDefault();
         if (!newMessage.trim() || !socket || !conversationId) return;
 
+        // Stop typing indicator
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+        }
+        if (socket) {
+            socket.emit('typing', {
+                conversationId,
+                isTyping: false
+            });
+        }
+
         const clientMessageId = generateMessageId();
         const messageData = {
             _id: `pending-${clientMessageId}`,
@@ -290,6 +342,17 @@ const MessageButton = () => {
         setIsOpen(false);
         setError('');
         setSuccess('');
+        
+        // Stop typing indicator when closing
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+        }
+        if (socket && conversationId) {
+            socket.emit('typing', {
+                conversationId,
+                isTyping: false
+            });
+        }
     };
 
     const handleResetConversation = () => {
@@ -304,6 +367,12 @@ const MessageButton = () => {
         setError('');
         setSuccess('');
         setPendingMessageId(null);
+        setIsTyping(false);
+        
+        // Stop typing indicator
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+        }
     };
 
     const modalVariants = {
@@ -381,18 +450,47 @@ const MessageButton = () => {
                                 initial="hidden"
                                 animate="visible"
                                 exit="exit"
-                                className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col"
+                                className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md flex flex-col"
+                                style={{ maxHeight: '80vh', height: '80vh' }}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 {/* Header */}
-                                <div className="flex items-center justify-between p-6 border-b border-gray-800">
+                                <div className="flex items-center justify-between p-6 border-b border-gray-800 flex-shrink-0">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-blue-500/20 rounded-lg">
                                             <MessageSquare className="text-blue-400" size={20} />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white">
-                                            {currentView === 'form' ? 'Start Conversation' : 'Live Chat'}
-                                        </h3>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white">
+                                                {currentView === 'form' ? 'Start Conversation' : 'Live Chat'}
+                                            </h3>
+                                            {currentView === 'chat' && isTyping && (
+                                                <motion.div 
+                                                    className="flex items-center gap-1 text-xs text-blue-400"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                >
+                                                    <div className="flex gap-1">
+                                                        <motion.div
+                                                            animate={{ y: [0, -5, 0] }}
+                                                            transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                                                            className="w-1 h-1 bg-blue-400 rounded-full"
+                                                        />
+                                                        <motion.div
+                                                            animate={{ y: [0, -5, 0] }}
+                                                            transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                                                            className="w-1 h-1 bg-blue-400 rounded-full"
+                                                        />
+                                                        <motion.div
+                                                            animate={{ y: [0, -5, 0] }}
+                                                            transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                                                            className="w-1 h-1 bg-blue-400 rounded-full"
+                                                        />
+                                                    </div>
+                                                    <span>Admin is typing...</span>
+                                                </motion.div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {currentView === 'chat' && (
@@ -417,10 +515,10 @@ const MessageButton = () => {
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex-1 overflow-hidden">
+                                <div className="flex-1 overflow-hidden flex flex-col">
                                     {currentView === 'form' ? (
                                         /* Start Conversation Form */
-                                        <form onSubmit={handleStartConversation} className="p-6 space-y-4">
+                                        <form onSubmit={handleStartConversation} className="p-6 space-y-4 flex-1 overflow-y-auto">
                                             {/* Success Message */}
                                             {success && (
                                                 <div className="p-3 bg-green-500/20 border border-green-500/50 rounded-lg">
@@ -445,7 +543,7 @@ const MessageButton = () => {
                                                     type="text"
                                                     name="name"
                                                     value={formData.name}
-                                                    onChange={handleInputChange}
+                                                    onChange={handleFormInputChange}
                                                     required
                                                     className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                                     placeholder="Enter your name"
@@ -462,7 +560,7 @@ const MessageButton = () => {
                                                     type="email"
                                                     name="email"
                                                     value={formData.email}
-                                                    onChange={handleInputChange}
+                                                    onChange={handleFormInputChange}
                                                     required
                                                     className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                                     placeholder="Enter your email"
@@ -498,7 +596,10 @@ const MessageButton = () => {
                                         /* Chat Interface */
                                         <div className="flex flex-col h-full">
                                             {/* Messages Container */}
-                                            <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-96">
+                                            <div 
+                                                ref={messagesContainerRef}
+                                                className="flex-1 overflow-y-auto p-4 space-y-4"
+                                            >
                                                 {isLoadingMessages ? (
                                                     <div className="flex justify-center items-center py-8">
                                                         <motion.div
@@ -545,34 +646,36 @@ const MessageButton = () => {
                                                 <div ref={messagesEndRef} />
                                             </div>
 
-                                            {/* Message Input */}
-                                            <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-800">
-                                                <div className="flex gap-2">
-                                                    <input
-                                                        type="text"
-                                                        value={newMessage}
-                                                        onChange={(e) => setNewMessage(e.target.value)}
-                                                        placeholder="Type your message..."
-                                                        className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                    />
-                                                    <motion.button
-                                                        type="submit"
-                                                        disabled={!newMessage.trim()}
-                                                        className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 text-white p-3 rounded-xl transition-colors"
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                    >
-                                                        <Send size={18} />
-                                                    </motion.button>
-                                                </div>
-                                            </form>
+                                            {/* Message Input - Always visible at bottom */}
+                                            <div className="border-t border-gray-800 flex-shrink-0">
+                                                <form onSubmit={handleSendMessage} className="p-4">
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="text"
+                                                            value={newMessage}
+                                                            onChange={handleInputChange}
+                                                            placeholder="Type your message..."
+                                                            className="flex-1 px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                        />
+                                                        <motion.button
+                                                            type="submit"
+                                                            disabled={!newMessage.trim()}
+                                                            className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 text-white p-3 rounded-xl transition-colors"
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                        >
+                                                            <Send size={18} />
+                                                        </motion.button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Footer */}
                                 {currentView === 'form' && (
-                                    <div className="px-6 py-4 border-t border-gray-800">
+                                    <div className="px-6 py-4 border-t border-gray-800 flex-shrink-0">
                                         <p className="text-center text-sm text-gray-400">
                                             We'll get back to you as soon as possible
                                         </p>
