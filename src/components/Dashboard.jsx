@@ -51,7 +51,6 @@ const AdminDashboard = () => {
         { id: 'messages', name: 'Messages', icon: MessageSquare, color: 'blue' },
         { id: 'projects', name: 'Projects', icon: FolderOpen, color: 'green' },
         { id: 'experience', name: 'Experience', icon: Briefcase, color: 'purple' },
-        { id: 'analytics', name: 'Analytics', icon: BarChart3, color: 'orange' }
     ];
 
     return (
@@ -128,7 +127,6 @@ const AdminDashboard = () => {
                         {activeTab === 'messages' && <MessagesTab />}
                         {activeTab === 'projects' && <ProjectsTab />}
                         {activeTab === 'experience' && <ExperienceTab />}
-                        {activeTab === 'analytics' && <AnalyticsTab />}
                     </div>
                 </div>
             </div>
@@ -888,61 +886,6 @@ const ExperienceForm = ({ experience, onSave, onCancel }) => {
     );
 };
 
-// Analytics Tab Component
-const AnalyticsTab = () => {
-    const [analytics, setAnalytics] = useState({
-        totalVisitors: 0,
-        messagesPerDay: 0,
-        popularProjects: []
-    });
 
-    useEffect(() => {
-        fetchAnalytics();
-    }, []);
-
-    const fetchAnalytics = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/admin/analytics');
-            const data = await response.json();
-            setAnalytics(data);
-        } catch (error) {
-            console.error('Error fetching analytics:', error);
-        }
-    };
-
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-gray-700/20 rounded-2xl border border-gray-700/50 p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Website Statistics</h3>
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Total Visitors</span>
-                        <span className="text-white font-semibold">{analytics.totalVisitors}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Messages Per Day</span>
-                        <span className="text-white font-semibold">{analytics.messagesPerDay}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Active Conversations</span>
-                        <span className="text-white font-semibold">{analytics.activeConversations || 0}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="bg-gray-700/20 rounded-2xl border border-gray-700/50 p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Popular Projects</h3>
-                <div className="space-y-3">
-                    {analytics.popularProjects?.map((project, index) => (
-                        <div key={index} className="flex justify-between items-center">
-                            <span className="text-gray-400">{project.title}</span>
-                            <span className="text-white font-semibold">{project.views} views</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
 
 export default AdminDashboard;
