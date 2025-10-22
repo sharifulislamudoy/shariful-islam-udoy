@@ -1,11 +1,15 @@
+// components/Navbar.jsx (Updated)
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Code2, Menu, X } from 'lucide-react';
+import { Code2, Menu, X, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
     { name: 'Home', href: '#home' },
@@ -44,15 +48,29 @@ const Navbar = () => {
       }
     };
 
+    // Check if user is admin
+    const checkAdminStatus = () => {
+      const token = localStorage.getItem('adminToken');
+      const expiry = localStorage.getItem('adminTokenExpiry');
+      
+      if (token && expiry && new Date().getTime() < parseInt(expiry)) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('scroll', handleSectionChange);
+    checkAdminStatus();
     
-    // Initial check on mount
-    handleSectionChange();
+    // Set up interval to check admin status
+    const interval = setInterval(checkAdminStatus, 5000);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('scroll', handleSectionChange);
+      clearInterval(interval);
     };
   }, []);
 
@@ -67,6 +85,15 @@ const Navbar = () => {
         top: offsetPosition,
         behavior: 'smooth'
       });
+    }
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleAdminClick = () => {
+    if (isAdmin) {
+      navigate('/dashboard');
+    } else {
+      navigate('/admin');
     }
     setIsMobileMenuOpen(false);
   };
@@ -112,7 +139,7 @@ const Navbar = () => {
           </motion.div>
 
           {/* Desktop Navigation - Right Side */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item, index) => (
               <motion.div
                 key={item.name}
@@ -137,6 +164,20 @@ const Navbar = () => {
                 </button>
               </motion.div>
             ))}
+            
+            {/* Admin Button - Only show when logged in */}
+            {isAdmin && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                onClick={handleAdminClick}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-sm font-medium hover:shadow-lg hover:shadow-purple-500/25 transition-all"
+              >
+                <Shield size={16} />
+                Dashboard
+              </motion.button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -176,6 +217,20 @@ const Navbar = () => {
                 {item.name}
               </motion.button>
             ))}
+            
+            {/* Admin Button for Mobile */}
+            {isAdmin && (
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
+                onClick={handleAdminClick}
+                className="flex items-center gap-3 w-full text-left px-6 py-3 text-base font-medium text-purple-300 bg-purple-500/20 border-r-2 border-purple-400 hover:bg-purple-500/30 transition-all"
+              >
+                <Shield size={18} />
+                Admin Dashboard
+              </motion.button>
+            )}
           </div>
         </motion.div>
       </div>
