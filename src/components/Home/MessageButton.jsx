@@ -29,6 +29,20 @@ const MessageButton = () => {
         return Date.now().toString() + Math.random().toString(36).substr(2, 9);
     };
 
+    // Helper function to safely format timestamp
+    const formatTimestamp = (timestamp) => {
+        try {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        } catch (error) {
+            console.error('Error formatting timestamp:', error);
+            return 'Just now';
+        }
+    };
+
     // Check for existing conversation on component mount AND when modal opens
     useEffect(() => {
         const checkExistingConversation = async () => {
@@ -108,7 +122,13 @@ const MessageButton = () => {
                 // Update the pending message with the server data
                 setMessages(prev => prev.map(msg => 
                     msg.clientMessageId === data.clientMessageId 
-                        ? { ...msg, _id: data._id, isPending: false }
+                        ? { 
+                            ...data, 
+                            text: data.message,
+                            isUser: data.sender === 'visitor', 
+                            isPending: false,
+                            timestamp: new Date(data.timestamp)
+                        }
                         : msg
                 ));
                 setPendingMessageId(null);
@@ -122,11 +142,11 @@ const MessageButton = () => {
                     
                     if (!messageExists) {
                         return [...prev, {
-                            _id: data._id,
+                            ...data,
                             text: data.message,
                             isUser: data.sender === 'visitor',
                             timestamp: new Date(data.timestamp),
-                            clientMessageId: data.clientMessageId
+                            isPending: false
                         }];
                     }
                     return prev;
@@ -140,19 +160,19 @@ const MessageButton = () => {
                 text: msg.message,
                 isUser: msg.sender === 'visitor',
                 timestamp: new Date(msg.timestamp),
-                clientMessageId: msg.clientMessageId
+                clientMessageId: msg.clientMessageId,
+                isPending: false
             }));
             setMessages(formattedMessages);
             setIsLoadingMessages(false);
         });
 
-        socket.on('conversation_started', (data) => {
-            setConversationId(data.conversationId);
-            setCurrentView('chat');
-        });
-
-        socket.on('admin_typing', (data) => {
-            setIsTyping(data.isTyping);
+        socket.on('user_typing', (data) => {
+            if (data.conversationId === conversationId && !data.isTyping) {
+                setIsTyping(false);
+            } else if (data.conversationId === conversationId && data.isTyping) {
+                setIsTyping(true);
+            }
         });
 
         socket.on('error', (error) => {
@@ -165,11 +185,10 @@ const MessageButton = () => {
             socket.off('disconnect');
             socket.off('message_received');
             socket.off('conversation_history');
-            socket.off('conversation_started');
-            socket.off('admin_typing');
+            socket.off('user_typing');
             socket.off('error');
         };
-    }, [socket, pendingMessageId]);
+    }, [socket, pendingMessageId, conversationId]);
 
     // Join conversation when socket and conversationId are available
     useEffect(() => {
@@ -232,7 +251,8 @@ const MessageButton = () => {
                 text: msg.message,
                 isUser: msg.sender === 'visitor',
                 timestamp: new Date(msg.timestamp),
-                clientMessageId: msg.clientMessageId
+                clientMessageId: msg.clientMessageId,
+                isPending: false
             }));
             
             setMessages(formattedMessages);
@@ -633,10 +653,7 @@ const MessageButton = () => {
                                                                 <p className={`text-xs mt-1 ${
                                                                     message.isUser ? 'text-blue-100' : 'text-gray-300'
                                                                 }`}>
-                                                                    {message.timestamp.toLocaleTimeString([], { 
-                                                                        hour: '2-digit', 
-                                                                        minute: '2-digit' 
-                                                                    })}
+                                                                    {formatTimestamp(message.timestamp)}
                                                                     {message.isPending && ' • Sending...'}
                                                                 </p>
                                                             </div>
