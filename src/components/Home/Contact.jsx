@@ -42,26 +42,26 @@ const Contact = () => {
         {
             platform: 'GitHub',
             icon: Github,
-            link: 'https://github.com/yourusername',
+            link: 'https://github.com/sharifulislamudoy',
             color: 'from-gray-700 to-gray-900',
             bgColor: 'bg-gray-700/20',
-            text: 'github.com/yourusername'
+            text: 'github.com/sharifulislamudoy'
         },
         {
             platform: 'LinkedIn',
             icon: Linkedin,
-            link: 'https://linkedin.com/in/yourprofile',
+            link: 'https://linkedin.com/in/shariful-islam-udoy',
             color: 'from-blue-600 to-blue-800',
             bgColor: 'bg-blue-600/20',
-            text: 'linkedin.com/in/yourprofile'
+            text: 'linkedin.com/in/shariful-islam-udoy'
         },
         {
             platform: 'Facebook',
             icon: Facebook,
-            link: 'https://facebook.com/yourprofile',
+            link: 'https://facebook.com/sharifulislamudoy56',
             color: 'from-blue-500 to-blue-700',
             bgColor: 'bg-blue-500/20',
-            text: 'facebook.com/yourprofile'
+            text: 'facebook.com/sharifulislamudoy56'
         }
     ];
 

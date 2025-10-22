@@ -336,12 +336,9 @@ const Hero = () => {
 
   // Quick questions suggestions
   const quickQuestions = [
-    "What are your skills?",
-    "Tell me about your experience",
     "What projects have you worked on?",
     "Are you available for work?",
     "What are your social media links?",
-    "Where did you study?"
   ];
 
   const handleQuickQuestion = (question) => {

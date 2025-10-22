@@ -57,6 +57,30 @@ const Projects = () => {
             category: "Backend",
             date: "2023",
             status: "Completed"
+        },
+        {
+            id: 5,
+            title: "Portfolio Website",
+            description: "A responsive portfolio website with modern design, animations, and interactive elements to showcase my work and skills.",
+            image: "/projects/portfolio.jpg",
+            technologies: ["React.js", "Framer Motion", "Tailwind CSS", "Vite"],
+            githubUrl: "https://github.com/udoy/portfolio",
+            liveUrl: "https://udoy.dev",
+            category: "Frontend",
+            date: "2024",
+            status: "Completed"
+        },
+        {
+            id: 6,
+            title: "Chat Application",
+            description: "Real-time chat application with multiple rooms, file sharing, and user presence indicators.",
+            image: "/projects/chat-app.jpg",
+            technologies: ["React.js", "Node.js", "Socket.io", "MongoDB", "JWT"],
+            githubUrl: "https://github.com/udoy/chat-app",
+            liveUrl: "https://chat-udoy.vercel.app",
+            category: "Full Stack",
+            date: "2024",
+            status: "Completed"
         }
     ];
 
@@ -151,109 +175,131 @@ const Projects = () => {
                     </motion.p>
                 </motion.div>
 
-                {/* Projects Grid */}
-                <motion.div
-                    variants={containerVariants}
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-                >
-                    {projects.map((project, index) => (
+                {/* Projects Container with Fixed Height, Scroll and Glowing Effects */}
+                <div className="relative">
+                    {/* Top Glowing Effect */}
+                    <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-blue-500/20 via-cyan-500/10 to-transparent z-10 pointer-events-none"></div>
+                    
+                    {/* Bottom Glowing Effect */}
+                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-blue-500/20 via-cyan-500/10 to-transparent z-10 pointer-events-none"></div>
+                    
+                    {/* Scroll Container */}
+                    <div className="h-[700px] overflow-y-auto pr-4 custom-scrollbar relative">
                         <motion.div
-                            key={project.id}
-                            variants={cardVariants}
-                            whileHover="hover"
-                            className="group"
+                            variants={containerVariants}
+                            className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-4"
                         >
-                            <div className="bg-gray-800/50 rounded-2xl overflow-hidden border border-gray-700/50 hover:border-blue-500/30 transition-all duration-300 h-full flex flex-col">
-                                {/* Project Image */}
-                                <div className="relative overflow-hidden">
-                                    <div className="h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                                        <Code className="text-blue-400" size={48} />
-                                    </div>
-                                    
-                                    {/* Category Badge */}
-                                    <div className={`absolute top-4 left-4 px-3 py-1 rounded-full bg-gradient-to-r ${getCategoryColor(project.category)} text-white text-sm font-medium`}>
-                                        {project.category}
-                                    </div>
+                            {projects.map((project, index) => (
+                                <motion.div
+                                    key={project.id}
+                                    variants={cardVariants}
+                                    whileHover="hover"
+                                    className="group"
+                                >
+                                    <div className="bg-gray-800/50 rounded-2xl overflow-hidden border border-gray-700/50 hover:border-blue-500/30 transition-all duration-300 h-full flex flex-col">
+                                        {/* Project Image */}
+                                        <div className="relative overflow-hidden">
+                                            <div className="h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                                                <Code className="text-blue-400" size={48} />
+                                            </div>
+                                            
+                                            {/* Category Badge */}
+                                            <div className={`absolute top-4 left-4 px-3 py-1 rounded-full bg-gradient-to-r ${getCategoryColor(project.category)} text-white text-sm font-medium`}>
+                                                {project.category}
+                                            </div>
 
-                                    {/* Status Badge */}
-                                    <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium border border-green-500/30">
-                                        {project.status}
-                                    </div>
-
-                                    {/* Overlay */}
-                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-                                        <motion.a
-                                            whileHover={{ scale: 1.1 }}
-                                            whileTap={{ scale: 0.9 }}
-                                            href={project.githubUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-white/10 backdrop-blur-sm rounded-full p-3 border border-white/20 hover:bg-white/20 transition-all"
-                                        >
-                                            <Github className="text-white" size={20} />
-                                        </motion.a>
-                                        <motion.a
-                                            whileHover={{ scale: 1.1 }}
-                                            whileTap={{ scale: 0.9 }}
-                                            href={project.liveUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-blue-500 rounded-full p-3 border border-blue-400 hover:bg-blue-600 transition-all"
-                                        >
-                                            <ExternalLink className="text-white" size={20} />
-                                        </motion.a>
-                                    </div>
-                                </div>
-
-                                {/* Project Content */}
-                                <div className="p-6 flex-1 flex flex-col">
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
-                                            {project.title}
-                                        </h3>
-                                        
-                                        <p className="text-gray-300 mb-4 leading-relaxed">
-                                            {project.description}
-                                        </p>
-
-                                        {/* Technologies */}
-                                        <div className="flex flex-wrap gap-2 mb-4">
-                                            {project.technologies.map((tech, techIndex) => (
-                                                <span
-                                                    key={techIndex}
-                                                    className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded-full text-sm border border-gray-600/50"
-                                                >
-                                                    {tech}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Project Footer */}
-                                    <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
-                                        <div className="flex items-center gap-4 text-sm text-gray-400">
-                                            <div className="flex items-center gap-1">
-                                                <Calendar size={16} />
-                                                <span>{project.date}</span>
+                                            {/* Status Badge */}
+                                            <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium border border-green-500/30">
+                                                {project.status}
                                             </div>
                                         </div>
-                                        
-                                        <motion.a
-                                            whileHover={{ x: 5 }}
-                                            href={project.liveUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-2 text-blue-400 hover:text-cyan-400 transition-colors font-medium"
-                                        >
-                                            View Project
-                                            <ArrowRight size={16} />
-                                        </motion.a>
+
+                                        {/* Project Content */}
+                                        <div className="p-6 flex-1 flex flex-col">
+                                            <div className="flex-1">
+                                                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
+                                                    {project.title}
+                                                </h3>
+                                                
+                                                <p className="text-gray-300 mb-4 leading-relaxed">
+                                                    {project.description}
+                                                </p>
+
+                                                {/* Technologies */}
+                                                <div className="flex flex-wrap gap-2 mb-4">
+                                                    {project.technologies.map((tech, techIndex) => (
+                                                        <span
+                                                            key={techIndex}
+                                                            className="px-3 py-1 bg-gray-700/50 text-gray-300 rounded-full text-sm border border-gray-600/50"
+                                                        >
+                                                            {tech}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Project Footer */}
+                                            <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+                                                <div className="flex items-center gap-4 text-sm text-gray-400">
+                                                    <div className="flex items-center gap-1">
+                                                        <Calendar size={16} />
+                                                        <span>{project.date}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex items-center gap-3">
+                                                    {/* GitHub Button */}
+                                                    <motion.a
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        href={project.githubUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-2 px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg border border-gray-600/50 hover:bg-gray-600/50 hover:text-white transition-all duration-300"
+                                                    >
+                                                        <Github size={18} />
+                                                        <span className="text-sm font-medium">Code</span>
+                                                    </motion.a>
+
+                                                    {/* Live Demo Button */}
+                                                    <motion.a
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        href={project.liveUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg border border-blue-400 hover:from-blue-600 hover:to-cyan-600 transition-all duration-300"
+                                                    >
+                                                        <ExternalLink size={18} />
+                                                        <span className="text-sm font-medium">Live Demo</span>
+                                                    </motion.a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
+                                </motion.div>
+                            ))}
                         </motion.div>
-                    ))}
-                </motion.div>
+                    </div>
+                </div>
+
+                {/* Custom Scrollbar Styling */}
+                <style jsx>{`
+                    .custom-scrollbar::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-track {
+                        background: rgba(75, 85, 99, 0.3);
+                        border-radius: 10px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb {
+                        background: linear-gradient(to bottom, #3b82f6, #06b6d4);
+                        border-radius: 10px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                        background: linear-gradient(to bottom, #2563eb, #0891b2);
+                    }
+                `}</style>
             </div>
         </motion.section>
     );
