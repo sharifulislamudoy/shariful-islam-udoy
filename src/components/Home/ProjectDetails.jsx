@@ -19,7 +19,7 @@ const ProjectDetails = () => {
             <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
                 <div className="text-center">
                     <h2 className="text-2xl text-white mb-4">Project Not Found</h2>
-                    <button 
+                    <button
                         onClick={() => navigate('/')}
                         className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                     >
@@ -179,34 +179,29 @@ const ProjectDetails = () => {
                             </div>
                         </motion.div>
 
-                        {/* Challenges & Lessons */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Screenshots Gallery */}
+                        {project.screenshots && project.screenshots.length > 0 && (
                             <motion.div
                                 variants={itemVariants}
                                 className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700/50"
                             >
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
-                                    <Clock size={20} className="text-orange-400" />
-                                    Challenges
-                                </h3>
-                                <p className="text-gray-300 leading-relaxed">
-                                    {project.challenges}
-                                </p>
+                                <h2 className="text-2xl font-bold text-white mb-6">Project Screenshots</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {project.screenshots.map((screenshot, index) => (
+                                        <div
+                                            key={index}
+                                            className="rounded-lg overflow-hidden border border-gray-600/50"
+                                        >
+                                            <img
+                                                src={screenshot}
+                                                alt={`${project.title} screenshot ${index + 1}`}
+                                                className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
                             </motion.div>
-
-                            <motion.div
-                                variants={itemVariants}
-                                className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700/50"
-                            >
-                                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
-                                    <Code size={20} className="text-purple-400" />
-                                    Lessons Learned
-                                </h3>
-                                <p className="text-gray-300 leading-relaxed">
-                                    {project.lessons}
-                                </p>
-                            </motion.div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Sidebar */}
@@ -254,23 +249,31 @@ const ProjectDetails = () => {
                                 </div>
                             </div>
                         </motion.div>
-
-                        {/* Screenshots Preview */}
+                        {/* Challenges & Lessons */}
                         <motion.div
                             variants={itemVariants}
                             className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700/50"
                         >
-                            <h3 className="text-xl font-bold text-white mb-6">Project Screenshots</h3>
-                            <div className="space-y-4">
-                                {project.screenshots.map((screenshot, index) => (
-                                    <div
-                                        key={index}
-                                        className="h-32 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center border border-gray-600/50"
-                                    >
-                                        <Code className="text-blue-400" size={32} />
-                                    </div>
-                                ))}
-                            </div>
+                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                                <Clock size={20} className="text-orange-400" />
+                                Challenges
+                            </h3>
+                            <p className="text-gray-300 leading-relaxed">
+                                {project.challenges}
+                            </p>
+                        </motion.div>
+
+                        <motion.div
+                            variants={itemVariants}
+                            className="bg-gray-800/50 rounded-2xl p-8 border border-gray-700/50"
+                        >
+                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                                <Code size={20} className="text-purple-400" />
+                                Lessons Learned
+                            </h3>
+                            <p className="text-gray-300 leading-relaxed">
+                                {project.lessons}
+                            </p>
                         </motion.div>
                     </div>
                 </div>
