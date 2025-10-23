@@ -21,9 +21,11 @@ import {
     Palette,
     ExternalLink,
     Github,
-    RefreshCw
+    RefreshCw,
+    Home
 } from 'lucide-react';
 import io from 'socket.io-client';
+import { useNavigate } from 'react-router';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('messages');
@@ -35,10 +37,24 @@ const AdminDashboard = () => {
     });
     const [socket, setSocket] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
+    const navigate = useNavigate();
 
     // Get admin token from localStorage
     const getAdminToken = () => {
         return localStorage.getItem('adminToken') || 'dev-token-123';
+    };
+
+    // Handle logout
+    const handleLogout = () => {
+        // Remove admin token from localStorage
+        localStorage.removeItem('adminToken');
+        // Navigate to home page
+        navigate('/');
+    };
+
+    // Handle back to home
+    const handleBackToHome = () => {
+        navigate('/');
     };
 
     // Fetch stats on component mount
@@ -113,13 +129,23 @@ const AdminDashboard = () => {
                         </div>
                         <div className="flex items-center gap-4">
                             <button 
+                                onClick={handleBackToHome}
+                                className="flex items-center gap-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                            >
+                                <Home size={16} />
+                                Back to Home
+                            </button>
+                            <button 
                                 onClick={fetchStats}
                                 className="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
                             >
                                 <RefreshCw size={16} />
                                 Refresh
                             </button>
-                            <button className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors">
+                            <button 
+                                onClick={handleLogout}
+                                className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                            >
                                 <LogOut size={18} />
                                 Logout
                             </button>
@@ -272,7 +298,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
     const handleSendReply = async (conversationId) => {
         if (!replyMessage.trim()) return;
 
-        setIsLoading(true);
+        // setIsLoading(true);
         try {
             const response = await fetch('http://localhost:5000/api/admin/send-reply', {
                 method: 'POST',
@@ -288,7 +314,11 @@ const MessagesTab = ({ socket, getAdminToken }) => {
 
             if (response.ok) {
                 setReplyMessage('');
-                // The socket will trigger a refresh via the event listeners
+                // Refresh the current conversation to show the new message immediately
+                // if (selectedConversation && selectedConversation._id === conversationId) {
+                //     await fetchConversation(conversationId);
+                // }
+                // The socket will also trigger a refresh via the event listeners
             } else {
                 console.error('Failed to send reply');
             }
@@ -323,15 +353,6 @@ const MessagesTab = ({ socket, getAdminToken }) => {
             console.error('Error fetching conversation:', error);
         }
     };
-
-    // Auto-refresh conversations every 10 seconds
-    useEffect(() => {
-        const interval = setInterval(() => {
-            fetchConversations();
-        }, 10000);
-
-        return () => clearInterval(interval);
-    }, []);
 
     // Safe array mapping with fallback to empty array
     const conversationsToRender = Array.isArray(conversations) ? conversations : [];

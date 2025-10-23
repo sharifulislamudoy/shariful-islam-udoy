@@ -102,12 +102,16 @@ const MessageButton = () => {
         };
     }, []);
 
-    // Socket event listeners
+    // Socket event listeners - FIXED VERSION
     useEffect(() => {
         if (!socket) return;
 
         socket.on('connect', () => {
             console.log('✅ Connected to server');
+            // Re-join conversation if we have one
+            if (conversationId) {
+                socket.emit('join_conversation', conversationId);
+            }
         });
 
         socket.on('disconnect', () => {
@@ -154,6 +158,29 @@ const MessageButton = () => {
             }
         });
 
+        // FIXED: Listen specifically for admin replies
+        socket.on('admin_reply', (data) => {
+            console.log('👨‍💼 Admin reply received:', data);
+            if (data.conversationId === conversationId) {
+                setMessages(prev => {
+                    const messageExists = prev.some(msg => 
+                        msg._id === data.message._id
+                    );
+                    
+                    if (!messageExists) {
+                        return [...prev, {
+                            ...data.message,
+                            text: data.message.message,
+                            isUser: false, // This is from admin
+                            timestamp: new Date(data.message.timestamp),
+                            isPending: false
+                        }];
+                    }
+                    return prev;
+                });
+            }
+        });
+
         socket.on('conversation_history', (history) => {
             const formattedMessages = history.map(msg => ({
                 _id: msg._id,
@@ -184,6 +211,7 @@ const MessageButton = () => {
             socket.off('connect');
             socket.off('disconnect');
             socket.off('message_received');
+            socket.off('admin_reply');
             socket.off('conversation_history');
             socket.off('user_typing');
             socket.off('error');

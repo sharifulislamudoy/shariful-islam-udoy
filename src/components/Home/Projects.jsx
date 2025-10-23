@@ -8,21 +8,86 @@ const Projects = () => {
         threshold: 0.1,
         triggerOnce: true
     });
-    const [projects, setProjects] = useState([]);
+//     const [projects, setProjects] = useState([]);
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
+//     useEffect(() => {
+//     fetchProjects();
+// }, []);
 
-    const fetchProjects = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/projects');
-            const data = await response.json();
-            setProjects(data);
-        } catch (error) {
-            console.error('Error fetching projects:', error);
+    const projects = [
+        {
+            id: 1,
+            title: "E-Commerce Platform",
+            description: "A full-stack e-commerce solution with React, Node.js, and MongoDB. Features include user authentication, payment integration, admin dashboard, and real-time inventory management.",
+            image: "/projects/ecommerce.jpg",
+            technologies: ["React.js", "Node.js", "MongoDB", "Express", "Stripe"],
+            githubUrl: "https://github.com/udoy/ecommerce",
+            liveUrl: "https://ecommerce-udoy.vercel.app",
+            category: "Full Stack",
+            date: "2024",
+            status: "Completed"
+        },
+        {
+            id: 2,
+            title: "Task Management App",
+            description: "A collaborative task management application with real-time updates, drag-and-drop functionality, and team collaboration features.",
+            image: "/projects/taskmanager.jpg",
+            technologies: ["Next.js", "TypeScript", "PostgreSQL", "Socket.io", "Tailwind"],
+            githubUrl: "https://github.com/udoy/taskmanager",
+            liveUrl: "https://taskmanager-udoy.vercel.app",
+            category: "Frontend",
+            date: "2024",
+            status: "Completed"
+        },
+        {
+            id: 3,
+            title: "Weather Dashboard",
+            description: "A beautiful weather application with location-based forecasts, interactive maps, and detailed weather analytics.",
+            image: "/projects/weather.jpg",
+            technologies: ["React.js", "Chart.js", "OpenWeather API", "Leaflet", "CSS3"],
+            githubUrl: "https://github.com/udoy/weather-dashboard",
+            liveUrl: "https://weather-udoy.vercel.app",
+            category: "Frontend",
+            date: "2023",
+            status: "Completed"
+        },
+        {
+            id: 4,
+            title: "Social Media API",
+            description: "A robust backend API for social media platform with features like posts, comments, likes, and real-time messaging.",
+            image: "/projects/social-api.jpg",
+            technologies: ["Node.js", "Express", "MongoDB", "JWT", "WebSockets"],
+            githubUrl: "https://github.com/udoy/social-api",
+            liveUrl: "https://social-api-udoy.herokuapp.com",
+            category: "Backend",
+            date: "2023",
+            status: "Completed"
+        },
+        {
+            id: 5,
+            title: "Portfolio Website",
+            description: "A responsive portfolio website with modern design, animations, and interactive elements to showcase my work and skills.",
+            image: "/projects/portfolio.jpg",
+            technologies: ["React.js", "Framer Motion", "Tailwind CSS", "Vite"],
+            githubUrl: "https://github.com/udoy/portfolio",
+            liveUrl: "https://udoy.dev",
+            category: "Frontend",
+            date: "2024",
+            status: "Completed"
+        },
+        {
+            id: 6,
+            title: "Chat Application",
+            description: "Real-time chat application with multiple rooms, file sharing, and user presence indicators.",
+            image: "/projects/chat-app.jpg",
+            technologies: ["React.js", "Node.js", "Socket.io", "MongoDB", "JWT"],
+            githubUrl: "https://github.com/udoy/chat-app",
+            liveUrl: "https://chat-udoy.vercel.app",
+            category: "Full Stack",
+            date: "2024",
+            status: "Completed"
         }
-    };
+    ];
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -119,10 +184,10 @@ const Projects = () => {
                 <div className="relative">
                     {/* Top Glowing Effect */}
                     <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-blue-500/20 via-cyan-500/10 to-transparent z-10 pointer-events-none"></div>
-
+                    
                     {/* Bottom Glowing Effect */}
                     <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-blue-500/20 via-cyan-500/10 to-transparent z-10 pointer-events-none"></div>
-
+                    
                     {/* Scroll Container */}
                     <div className="h-[700px] overflow-y-auto pr-4 custom-scrollbar relative">
                         <motion.div
@@ -142,7 +207,7 @@ const Projects = () => {
                                             <div className="h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
                                                 <Code className="text-blue-400" size={48} />
                                             </div>
-
+                                            
                                             {/* Category Badge */}
                                             <div className={`absolute top-4 left-4 px-3 py-1 rounded-full bg-gradient-to-r ${getCategoryColor(project.category)} text-white text-sm font-medium`}>
                                                 {project.category}
@@ -160,7 +225,7 @@ const Projects = () => {
                                                 <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
                                                     {project.title}
                                                 </h3>
-
+                                                
                                                 <p className="text-gray-300 mb-4 leading-relaxed">
                                                     {project.description}
                                                 </p>
@@ -186,7 +251,7 @@ const Projects = () => {
                                                         <span>{project.date}</span>
                                                     </div>
                                                 </div>
-
+                                                
                                                 <div className="flex items-center gap-3">
                                                     {/* GitHub Button */}
                                                     <motion.a
