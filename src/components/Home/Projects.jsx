@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { ExternalLink, Github, Calendar, Code, Users, ArrowRight } from 'lucide-react';
+import { ExternalLink, Github, Calendar, Code, Users, ArrowRight, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 const Projects = () => {
     const [ref, inView] = useInView({
         threshold: 0.1,
         triggerOnce: true
     });
-//     const [projects, setProjects] = useState([]);
-
-//     useEffect(() => {
-//     fetchProjects();
-// }, []);
+    
+    const navigate = useNavigate();
 
     const projects = [
         {
@@ -25,7 +23,25 @@ const Projects = () => {
             liveUrl: "https://ecommerce-udoy.vercel.app",
             category: "Full Stack",
             date: "2024",
-            status: "Completed"
+            status: "Completed",
+            detailedDescription: "This e-commerce platform is a comprehensive solution built with modern technologies. It includes features like user authentication with JWT, product catalog with search and filtering, shopping cart functionality, secure payment processing with Stripe, order management, and an admin dashboard for inventory and sales analytics.",
+            features: [
+                "User authentication & authorization",
+                "Product catalog with search & filters",
+                "Shopping cart & wishlist",
+                "Secure payment processing (Stripe)",
+                "Order tracking & management",
+                "Admin dashboard with analytics",
+                "Real-time inventory updates",
+                "Customer reviews & ratings"
+            ],
+            challenges: "Implementing real-time inventory management while handling concurrent user purchases required careful database transaction handling and optimistic locking strategies.",
+            lessons: "Learned about payment gateway integration, secure authentication practices, and building scalable backend architecture.",
+            screenshots: [
+                "/projects/ecommerce-1.jpg",
+                "/projects/ecommerce-2.jpg",
+                "/projects/ecommerce-3.jpg"
+            ]
         },
         {
             id: 2,
@@ -37,7 +53,24 @@ const Projects = () => {
             liveUrl: "https://taskmanager-udoy.vercel.app",
             category: "Frontend",
             date: "2024",
-            status: "Completed"
+            status: "Completed",
+            detailedDescription: "A modern task management application designed for team collaboration. Features real-time updates, drag-and-drop functionality, and comprehensive project management tools.",
+            features: [
+                "Real-time task updates",
+                "Drag & drop interface",
+                "Team collaboration",
+                "Project timelines",
+                "File attachments",
+                "Progress tracking",
+                "Multiple workspaces"
+            ],
+            challenges: "Implementing real-time synchronization across multiple clients while maintaining data consistency was challenging.",
+            lessons: "Gained expertise in WebSockets, real-time data handling, and TypeScript implementation.",
+            screenshots: [
+                "/projects/taskmanager-1.jpg",
+                "/projects/taskmanager-2.jpg",
+                "/projects/taskmanager-3.jpg"
+            ]
         },
         {
             id: 3,
@@ -49,7 +82,24 @@ const Projects = () => {
             liveUrl: "https://weather-udoy.vercel.app",
             category: "Frontend",
             date: "2023",
-            status: "Completed"
+            status: "Completed",
+            detailedDescription: "A comprehensive weather dashboard that provides detailed weather information with beautiful visualizations and interactive maps.",
+            features: [
+                "Location-based weather",
+                "7-day forecast",
+                "Interactive maps",
+                "Weather charts & graphs",
+                "Severe weather alerts",
+                "Multiple location support",
+                "Responsive design"
+            ],
+            challenges: "Handling multiple API calls efficiently and creating responsive weather visualizations that work across different screen sizes.",
+            lessons: "Learned about data visualization with Chart.js and working with external APIs effectively.",
+            screenshots: [
+                "/projects/weather-1.jpg",
+                "/projects/weather-2.jpg",
+                "/projects/weather-3.jpg"
+            ]
         },
         {
             id: 4,
@@ -61,7 +111,24 @@ const Projects = () => {
             liveUrl: "https://social-api-udoy.herokuapp.com",
             category: "Backend",
             date: "2023",
-            status: "Completed"
+            status: "Completed",
+            detailedDescription: "A complete backend API for a social media platform with all the essential features needed for modern social networking.",
+            features: [
+                "User authentication & profiles",
+                "Post creation & management",
+                "Comments & likes system",
+                "Real-time messaging",
+                "File upload handling",
+                "Follow/unfollow system",
+                "News feed algorithm"
+            ],
+            challenges: "Building a scalable real-time messaging system and implementing efficient news feed algorithms.",
+            lessons: "Deepened understanding of WebSocket implementation and database optimization for social features.",
+            screenshots: [
+                "/projects/social-api-1.jpg",
+                "/projects/social-api-2.jpg",
+                "/projects/social-api-3.jpg"
+            ]
         },
         {
             id: 5,
@@ -73,7 +140,24 @@ const Projects = () => {
             liveUrl: "https://udoy.dev",
             category: "Frontend",
             date: "2024",
-            status: "Completed"
+            status: "Completed",
+            detailedDescription: "A modern, responsive portfolio website showcasing my projects and skills with smooth animations and interactive elements.",
+            features: [
+                "Responsive design",
+                "Smooth animations",
+                "Dark/light theme",
+                "Project showcase",
+                "Contact form",
+                "SEO optimized",
+                "Fast loading"
+            ],
+            challenges: "Creating performant animations that work smoothly across all devices and browsers.",
+            lessons: "Mastered Framer Motion for animations and learned advanced Tailwind CSS techniques.",
+            screenshots: [
+                "/projects/portfolio-1.jpg",
+                "/projects/portfolio-2.jpg",
+                "/projects/portfolio-3.jpg"
+            ]
         },
         {
             id: 6,
@@ -85,9 +169,31 @@ const Projects = () => {
             liveUrl: "https://chat-udoy.vercel.app",
             category: "Full Stack",
             date: "2024",
-            status: "Completed"
+            status: "Completed",
+            detailedDescription: "A feature-rich real-time chat application supporting multiple rooms, file sharing, and advanced user presence features.",
+            features: [
+                "Real-time messaging",
+                "Multiple chat rooms",
+                "File & image sharing",
+                "User presence indicators",
+                "Message history",
+                "Typing indicators",
+                "User profiles"
+            ],
+            challenges: "Handling real-time data synchronization and file uploads efficiently while maintaining application performance.",
+            lessons: "Learned about real-time application architecture and file handling in chat applications.",
+            screenshots: [
+                "/projects/chat-app-1.jpg",
+                "/projects/chat-app-2.jpg",
+                "/projects/chat-app-3.jpg"
+            ]
         }
     ];
+
+    const handleViewDetails = (project) => {
+        const slug = project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        navigate(`/projects/${slug}`, { state: { project } });
+    };
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -253,6 +359,17 @@ const Projects = () => {
                                                 </div>
                                                 
                                                 <div className="flex items-center gap-3">
+                                                    {/* View Details Button */}
+                                                    <motion.button
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        onClick={() => handleViewDetails(project)}
+                                                        className="flex items-center gap-2 px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg border border-gray-600/50 hover:bg-gray-600/50 hover:text-white transition-all duration-300"
+                                                    >
+                                                        <Eye size={18} />
+                                                        <span className="text-sm font-medium">Details</span>
+                                                    </motion.button>
+
                                                     {/* GitHub Button */}
                                                     <motion.a
                                                         whileHover={{ scale: 1.05 }}

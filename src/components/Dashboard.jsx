@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import io from 'socket.io-client';
 import { useNavigate } from 'react-router';
+import CustomCursor from './Custom-Cursor/CustomCursor';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('messages');
@@ -67,7 +68,7 @@ const AdminDashboard = () => {
         const newSocket = io('http://localhost:5000', {
             transports: ['websocket', 'polling']
         });
-        
+
         newSocket.on('connect', () => {
             console.log('✅ Admin connected to server');
         });
@@ -99,11 +100,11 @@ const AdminDashboard = () => {
                     'admin-token': getAdminToken()
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error(`Failed to fetch stats: ${response.status}`);
             }
-            
+
             const data = await response.json();
             setStats(data);
         } catch (error) {
@@ -120,6 +121,7 @@ const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
             {/* Header */}
+            <CustomCursor />
             <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700/50">
                 <div className="max-w-7xl mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
@@ -128,21 +130,21 @@ const AdminDashboard = () => {
                             <p className="text-gray-400">Manage your portfolio website</p>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button 
+                            <button
                                 onClick={handleBackToHome}
                                 className="flex items-center gap-2 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
                             >
                                 <Home size={16} />
                                 Back to Home
                             </button>
-                            <button 
+                            <button
                                 onClick={fetchStats}
                                 className="flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
                             >
                                 <RefreshCw size={16} />
                                 Refresh
                             </button>
-                            <button 
+                            <button
                                 onClick={handleLogout}
                                 className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                             >
@@ -192,11 +194,10 @@ const AdminDashboard = () => {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                        activeTab === tab.id
+                                    className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === tab.id
                                             ? `border-${tab.color}-500 text-${tab.color}-400`
                                             : 'border-transparent text-gray-400 hover:text-gray-300'
-                                    }`}
+                                        }`}
                                 >
                                     <tab.icon size={18} />
                                     {tab.name}
@@ -278,11 +279,11 @@ const MessagesTab = ({ socket, getAdminToken }) => {
                     'admin-token': getAdminToken()
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error(`Failed to fetch conversations: ${response.status}`);
             }
-            
+
             const data = await response.json();
             // Ensure conversations is always an array
             setConversations(Array.isArray(data) ? data : []);
@@ -346,7 +347,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
                     'admin-token': getAdminToken()
                 }
             });
-            
+
             // Refresh conversations to update unread counts
             fetchConversations();
         } catch (error) {
@@ -365,7 +366,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
                     <h3 className="text-lg font-semibold text-white">Conversations</h3>
                     <div className="flex items-center gap-2">
                         <span className="text-gray-400 text-sm">{conversationsToRender.length} total</span>
-                        <button 
+                        <button
                             onClick={fetchConversations}
                             className="p-1 hover:bg-gray-700 rounded transition-colors"
                         >
@@ -373,7 +374,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
                         </button>
                     </div>
                 </div>
-                
+
                 {loadingConversations ? (
                     <div className="flex justify-center items-center py-8">
                         <RefreshCw size={24} className="text-blue-400 animate-spin" />
@@ -382,7 +383,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
                 ) : error ? (
                     <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-center">
                         <p className="text-red-400 text-sm mb-2">Error loading conversations</p>
-                        <button 
+                        <button
                             onClick={fetchConversations}
                             className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition-colors"
                         >
@@ -401,11 +402,10 @@ const MessagesTab = ({ socket, getAdminToken }) => {
                                 <div
                                     key={conversation._id}
                                     onClick={() => fetchConversation(conversation._id)}
-                                    className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                                        selectedConversation?._id === conversation._id
+                                    className={`p-4 rounded-xl border cursor-pointer transition-all ${selectedConversation?._id === conversation._id
                                             ? 'border-blue-500 bg-blue-500/10'
                                             : 'border-gray-700/50 bg-gray-700/20 hover:bg-gray-700/30'
-                                    }`}
+                                        }`}
                                 >
                                     <div className="flex items-center justify-between mb-2">
                                         <h4 className="font-semibold text-white">{conversation.name}</h4>
@@ -459,11 +459,10 @@ const MessagesTab = ({ socket, getAdminToken }) => {
                                         className={`flex ${message.sender === 'admin' ? 'justify-end' : 'justify-start'}`}
                                     >
                                         <div
-                                            className={`max-w-md px-4 py-2 rounded-2xl ${
-                                                message.sender === 'admin'
+                                            className={`max-w-md px-4 py-2 rounded-2xl ${message.sender === 'admin'
                                                     ? 'bg-blue-500 text-white rounded-br-none'
                                                     : 'bg-gray-600 text-white rounded-bl-none'
-                                            }`}
+                                                }`}
                                         >
                                             <p className="text-sm">{message.message}</p>
                                             <p className="text-xs opacity-75 mt-1">
@@ -690,10 +689,10 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = project 
+            const url = project
                 ? `http://localhost:5000/api/admin/projects/${project._id}`
                 : 'http://localhost:5000/api/admin/projects';
-            
+
             const method = project ? 'PUT' : 'POST';
 
             const response = await fetch(url, {
@@ -725,7 +724,7 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="text"
                             value={formData.title}
-                            onChange={(e) => setFormData({...formData, title: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
@@ -734,7 +733,7 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                         <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
                         <select
                             value={formData.category}
-                            onChange={(e) => setFormData({...formData, category: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="Frontend">Frontend</option>
@@ -749,7 +748,7 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                     <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
                     <textarea
                         value={formData.description}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows="3"
                         className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
@@ -763,7 +762,7 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                     <input
                         type="text"
                         value={formData.technologies.join(', ')}
-                        onChange={(e) => setFormData({...formData, technologies: e.target.value.split(',').map(tech => tech.trim()).filter(tech => tech)})}
+                        onChange={(e) => setFormData({ ...formData, technologies: e.target.value.split(',').map(tech => tech.trim()).filter(tech => tech) })}
                         className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="React, Node.js, MongoDB"
                     />
@@ -775,7 +774,7 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="text"
                             value={formData.date}
-                            onChange={(e) => setFormData({...formData, date: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="2024"
                         />
@@ -785,7 +784,7 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="url"
                             value={formData.githubUrl}
-                            onChange={(e) => setFormData({...formData, githubUrl: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -794,7 +793,7 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="url"
                             value={formData.liveUrl}
-                            onChange={(e) => setFormData({...formData, liveUrl: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -941,7 +940,7 @@ const ExperienceTab = ({ getAdminToken }) => {
                                         </button>
                                     </div>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div className="flex items-center gap-2 text-gray-300">
                                         <Calendar className="text-blue-400" size={16} />
@@ -1011,10 +1010,10 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = experience 
+            const url = experience
                 ? `http://localhost:5000/api/admin/experiences/${experience._id}`
                 : 'http://localhost:5000/api/admin/experiences';
-            
+
             const method = experience ? 'PUT' : 'POST';
 
             const response = await fetch(url, {
@@ -1046,7 +1045,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="text"
                             value={formData.title}
-                            onChange={(e) => setFormData({...formData, title: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
@@ -1056,7 +1055,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="text"
                             value={formData.company}
-                            onChange={(e) => setFormData({...formData, company: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
@@ -1069,7 +1068,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="text"
                             value={formData.period}
-                            onChange={(e) => setFormData({...formData, period: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, period: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="2022 - 2023"
                             required
@@ -1080,7 +1079,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                         <input
                             type="text"
                             value={formData.location}
-                            onChange={(e) => setFormData({...formData, location: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
@@ -1089,7 +1088,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                         <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
                         <select
                             value={formData.type}
-                            onChange={(e) => setFormData({...formData, type: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="Full-time">Full-time</option>
@@ -1105,7 +1104,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                     <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
                     <textarea
                         value={formData.description}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows="3"
                         className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
@@ -1119,7 +1118,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                     <input
                         type="text"
                         value={formData.technologies.join(', ')}
-                        onChange={(e) => setFormData({...formData, technologies: e.target.value.split(',').map(tech => tech.trim()).filter(tech => tech)})}
+                        onChange={(e) => setFormData({ ...formData, technologies: e.target.value.split(',').map(tech => tech.trim()).filter(tech => tech) })}
                         className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="React, Node.js, MongoDB"
                     />
@@ -1131,7 +1130,7 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
                     </label>
                     <textarea
                         value={formData.achievements.join('\n')}
-                        onChange={(e) => setFormData({...formData, achievements: e.target.value.split('\n').filter(achievement => achievement.trim())})}
+                        onChange={(e) => setFormData({ ...formData, achievements: e.target.value.split('\n').filter(achievement => achievement.trim()) })}
                         rows="4"
                         className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Improved performance by 40%&#10;Led 5+ successful projects"
