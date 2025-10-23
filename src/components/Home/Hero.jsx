@@ -442,6 +442,8 @@ const Hero = () => {
         <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700 h-[500px] flex flex-col">
           {/* Chat Header */}
           <div className="bg-gray-800 px-4 py-3 flex items-center gap-3 border-b border-gray-700">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <Bot className="text-green-400" size={20} />
             <div className="text-gray-200 text-sm font-semibold">Udoy's AI Assistant</div>
