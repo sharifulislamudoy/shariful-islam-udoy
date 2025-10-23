@@ -107,7 +107,7 @@ const MessageButton = () => {
         if (!socket) return;
 
         socket.on('connect', () => {
-            console.log('✅ Connected to server');
+            // console.log('✅ Connected to server');
             // Re-join conversation if we have one
             if (conversationId) {
                 socket.emit('join_conversation', conversationId);
@@ -115,11 +115,11 @@ const MessageButton = () => {
         });
 
         socket.on('disconnect', () => {
-            console.log('❌ Disconnected from server');
+            // console.log('❌ Disconnected from server');
         });
 
         socket.on('message_received', (data) => {
-            console.log('📨 Message received:', data);
+            // console.log('📨 Message received:', data);
             
             // Check if this is our own pending message
             if (data.clientMessageId === pendingMessageId) {
@@ -160,7 +160,7 @@ const MessageButton = () => {
 
         // FIXED: Listen specifically for admin replies
         socket.on('admin_reply', (data) => {
-            console.log('👨‍💼 Admin reply received:', data);
+            // console.log('👨‍💼 Admin reply received:', data);
             if (data.conversationId === conversationId) {
                 setMessages(prev => {
                     const messageExists = prev.some(msg => 

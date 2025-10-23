@@ -71,18 +71,18 @@ const AdminDashboard = () => {
         });
 
         newSocket.on('connect', () => {
-            console.log('✅ Admin connected to server');
+            // console.log('✅ Admin connected to server');
         });
 
         newSocket.on('new_message', (data) => {
-            console.log('📨 New message received in admin:', data);
+            // console.log('📨 New message received in admin:', data);
             // Refresh conversations when new message arrives
             setRefreshKey(prev => prev + 1);
             fetchStats(); // Update stats
         });
 
         newSocket.on('conversation_updated', (data) => {
-            console.log('🔄 Conversation updated:', data);
+            // console.log('🔄 Conversation updated:', data);
             setRefreshKey(prev => prev + 1);
             fetchStats(); // Update stats
         });
