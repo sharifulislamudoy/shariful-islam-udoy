@@ -66,12 +66,12 @@ const AdminDashboard = () => {
     }, []);
 
     const initializeSocket = () => {
-        const newSocket = io('http://localhost:5000', {
+        const newSocket = io('https://server-bagw.onrender.com', {
             transports: ['websocket', 'polling']
         });
 
         newSocket.on('connect', () => {
-            // console.log('✅ Admin connected to server');
+            console.log('✅ Admin connected to server');
         });
 
         newSocket.on('new_message', (data) => {
@@ -96,7 +96,7 @@ const AdminDashboard = () => {
 
     const fetchStats = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/stats', {
+            const response = await fetch('https://server-bagw.onrender.com/api/admin/stats', {
                 headers: {
                     'admin-token': getAdminToken()
                 }
@@ -266,7 +266,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
         try {
             setLoadingConversations(true);
             setError(null);
-            const response = await fetch('http://localhost:5000/api/admin/conversations', {
+            const response = await fetch('https://server-bagw.onrender.com/api/admin/conversations', {
                 headers: {
                     'admin-token': getAdminToken()
                 }
@@ -293,7 +293,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
 
         // setIsLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/admin/send-reply', {
+            const response = await fetch('https://server-bagw.onrender.com/api/admin/send-reply', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -324,7 +324,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
 
     const fetchConversation = async (conversationId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/admin/conversations/${conversationId}`, {
+            const response = await fetch(`https://server-bagw.onrender.com/api/admin/conversations/${conversationId}`, {
                 headers: {
                     'admin-token': getAdminToken()
                 }
@@ -333,7 +333,7 @@ const MessagesTab = ({ socket, getAdminToken }) => {
             setSelectedConversation(data);
 
             // Mark messages as read when opening conversation
-            await fetch(`http://localhost:5000/api/admin/conversations/${conversationId}/mark-read`, {
+            await fetch(`https://server-bagw.onrender.com/api/admin/conversations/${conversationId}/mark-read`, {
                 method: 'PUT',
                 headers: {
                     'admin-token': getAdminToken()
@@ -525,7 +525,7 @@ const ProjectsTab = ({ getAdminToken }) => {
     const fetchProjects = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:5000/api/admin/projects', {
+            const response = await fetch('https://server-bagw.onrender.com/api/admin/projects', {
                 headers: {
                     'admin-token': getAdminToken()
                 }
@@ -543,7 +543,7 @@ const ProjectsTab = ({ getAdminToken }) => {
     const handleDelete = async (projectId) => {
         if (window.confirm('Are you sure you want to delete this project?')) {
             try {
-                await fetch(`http://localhost:5000/api/admin/projects/${projectId}`, {
+                await fetch(`https://server-bagw.onrender.com/api/admin/projects/${projectId}`, {
                     method: 'DELETE',
                     headers: {
                         'admin-token': getAdminToken()
@@ -776,8 +776,8 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
         e.preventDefault();
         try {
             const url = project
-                ? `http://localhost:5000/api/admin/projects/${project._id}`
-                : 'http://localhost:5000/api/admin/projects';
+                ? `https://server-bagw.onrender.com/api/admin/projects/${project._id}`
+                : 'https://server-bagw.onrender.com/api/admin/projects';
 
             const method = project ? 'PUT' : 'POST';
 
@@ -1130,7 +1130,7 @@ const ExperienceTab = ({ getAdminToken }) => {
     const fetchExperiences = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:5000/api/admin/experiences', {
+            const response = await fetch('https://server-bagw.onrender.com/api/admin/experiences', {
                 headers: {
                     'admin-token': getAdminToken()
                 }
@@ -1148,7 +1148,7 @@ const ExperienceTab = ({ getAdminToken }) => {
     const handleDelete = async (experienceId) => {
         if (window.confirm('Are you sure you want to delete this experience?')) {
             try {
-                await fetch(`http://localhost:5000/api/admin/experiences/${experienceId}`, {
+                await fetch(`https://server-bagw.onrender.com/api/admin/experiences/${experienceId}`, {
                     method: 'DELETE',
                     headers: {
                         'admin-token': getAdminToken()
@@ -1308,8 +1308,8 @@ const ExperienceForm = ({ experience, onSave, onCancel, getAdminToken }) => {
         e.preventDefault();
         try {
             const url = experience
-                ? `http://localhost:5000/api/admin/experiences/${experience._id}`
-                : 'http://localhost:5000/api/admin/experiences';
+                ? `https://server-bagw.onrender.com/api/admin/experiences/${experience._id}`
+                : 'https://server-bagw.onrender.com/api/admin/experiences';
 
             const method = experience ? 'PUT' : 'POST';
 

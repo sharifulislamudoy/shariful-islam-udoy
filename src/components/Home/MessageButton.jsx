@@ -24,6 +24,10 @@ const MessageButton = () => {
     const [isTyping, setIsTyping] = useState(false);
     const [typingTimeout, setTypingTimeout] = useState(null);
 
+    // Environment configuration
+    const SOCKET_URL = 'https://server-bagw.onrender.com'
+    const API_BASE = 'https://server-bagw.onrender.com'
+
     // Generate unique ID for messages
     const generateMessageId = () => {
         return Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -92,7 +96,7 @@ const MessageButton = () => {
 
     // Initialize socket connection
     useEffect(() => {
-        const newSocket = io('http://localhost:5000', {
+        const newSocket = io(SOCKET_URL, {
             transports: ['websocket', 'polling']
         });
         setSocket(newSocket);
@@ -107,7 +111,7 @@ const MessageButton = () => {
         if (!socket) return;
 
         socket.on('connect', () => {
-            // console.log('✅ Connected to server');
+            console.log('✅ Connected to server');
             // Re-join conversation if we have one
             if (conversationId) {
                 socket.emit('join_conversation', conversationId);
@@ -115,7 +119,7 @@ const MessageButton = () => {
         });
 
         socket.on('disconnect', () => {
-            // console.log('❌ Disconnected from server');
+            console.log('❌ Disconnected from server');
         });
 
         socket.on('message_received', (data) => {
@@ -267,7 +271,7 @@ const MessageButton = () => {
         
         setIsLoadingMessages(true);
         try {
-            const response = await fetch(`http://localhost:5000/api/conversations/${conversationId}/messages`);
+            const response = await fetch(`${API_BASE}/api/conversations/${conversationId}/messages`);
             
             if (!response.ok) {
                 throw new Error('Failed to load messages');
@@ -309,7 +313,7 @@ const MessageButton = () => {
         setSuccess('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/start-conversation', {
+            const response = await fetch(`${API_BASE}/api/start-conversation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

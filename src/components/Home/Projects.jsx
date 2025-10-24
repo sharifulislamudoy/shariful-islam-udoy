@@ -20,7 +20,7 @@ const Projects = () => {
 
     const fetchProjects = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/projects');
+            const response = await fetch('https://server-bagw.onrender.com/api/admin/projects');
             const data = await response.json();
             setProjects(Array.isArray(data) ? data : []);
         } catch (error) {
