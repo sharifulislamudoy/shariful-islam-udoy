@@ -15,7 +15,7 @@ const Hero = () => {
   const [currentTypingId, setCurrentTypingId] = useState(null);
   const [hasInitialized, setHasInitialized] = useState(false);
   const chatEndRef = useRef(null);
-  const chatContainerRef = useRef(null); // Chat container এর ref
+  const chatContainerRef = useRef(null);
   const heroRef = useRef(null);
 
   const roles = [
@@ -43,19 +43,36 @@ const Hero = () => {
     phone: "+880 19953 22033",
     whatsapp: "https://wa.me/8801995322033",
     projects: [
-      "E-commerce platform with MERN stack",
-      "Real-time chat application",
-      "Project management dashboard",
-      "Portfolio websites"
+      {
+        name: "Mighty Striker",
+        description: "A comprehensive cricket platform built with Next.js featuring live scores, player statistics, team management, and real-time updates",
+        technologies: ["Next.js", "React", "Tailwind CSS", "JavaScript", "Vercel"],
+        features: [
+          "Live match scores and updates",
+          "Player and team statistics",
+          "Responsive design",
+          "Fast performance optimized with Next.js",
+          "Modern UI with Tailwind CSS"
+        ],
+        liveLink: "https://mighty-strikers.vercel.app/",
+        githubLink: "https://github.com/sharifulislamudoy/mighty-strikers",
+        detailsLink: "https://shariful-islam-udoy.vercel.app/projects/mighty-strikers",
+        status: "Completed"
+      },
+      "Cricket Team Representative platform with MERN stack",
+      "Real-time match update",
+      "Player Ranking",
+      "Player dashboard",
+      "Mighty Strikers websites"
     ],
     languages: ["JavaScript", "TypeScript", "Python", "Java"],
     tools: ["Git", "Docker", "VS Code", "Postman", "Figma"],
     availability: "Available for freelance projects",
-    hobbies: ["Coding", "Learning new technologies", "Open source contributions"],
+    hobbies: ["Coding", "Learning new technologies", "Open source contributions", "Football"],
     social: {
       github: "https://github.com/sharifulislamudoy",
       linkedin: "https://linkedin.com/in/shariful-islam-udoy",
-      portfolio: "https://yourportfolio.com",
+      portfolio: "https://shariful-islam-udoy.vercel.app",
       facebook: "https://www.facebook.com/sharifulislamudoy56/",
       fiverr: "https://www.fiverr.com/sharifulislam_u"
     }
@@ -84,8 +101,9 @@ const Hero = () => {
         else if (url.includes('linkedin.com')) platformName = 'LinkedIn';
         else if (url.includes('facebook.com')) platformName = 'Facebook';
         else if (url.includes('fiverr.com')) platformName = 'Fiverr';
-        else if (url.includes('yourportfolio.com') || url.includes('portfolio')) platformName = 'Portfolio';
+        else if (url.includes('vercel.app') || url.includes('portfolio')) platformName = 'Portfolio';
         else if (url.includes('wa.me')) platformName = 'WhatsApp';
+        else if (url.includes('mighty-strikers')) platformName = 'Mighty Strikers';
 
         return (
           <a
@@ -153,7 +171,7 @@ const Hero = () => {
     if (hasInitialized) return;
 
     const timer = setTimeout(() => {
-      const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, and more! What would you like to know about him?`;
+      const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects and more! What would you like to know about him?`;
       const initialMessageId = 1;
 
       typeMessage(initialMessage, initialMessageId, () => {
@@ -222,7 +240,7 @@ const Hero = () => {
     setIsLoading(true);
 
     try {
-      // System prompt with your information
+      // System prompt with your information including Mighty Strikers project
       const systemPrompt = `You are an AI assistant for Shariful Islam Udoy (Udoy), a full stack developer. 
       
       IMPORTANT: Always respond as if you ARE Udoy's assistant. Use "I", "my", "me" when referring to Udoy's qualifications and experience.
@@ -237,7 +255,21 @@ const Hero = () => {
       - Email: ${developerInfo.email}
       - Phone: ${developerInfo.phone}
       - WhatsApp: ${developerInfo.whatsapp}
-      - Projects: ${developerInfo.projects.join(', ')}
+      
+      PROJECTS (Pay special attention to Mighty Strikers):
+      ${developerInfo.projects.map(project => {
+        if (typeof project === 'object' && project.name === "Mighty Striker") {
+          return `- MIGHTY STRIKERS (Flagship Project): ${project.description}
+          Technologies: ${project.technologies.join(', ')}
+          Features: ${project.features.join(', ')}
+          Live Demo: ${project.liveLink}
+          GitHub: ${project.githubLink}
+          Details: ${project.detailsLink}
+          Status: ${project.status}`;
+        }
+        return `- ${project}`;
+      }).join('\n')}
+
       - Programming Languages: ${developerInfo.languages.join(', ')}
       - Tools: ${developerInfo.tools.join(', ')}
       - Availability: ${developerInfo.availability}
@@ -249,8 +281,14 @@ const Hero = () => {
         * Fiverr: ${developerInfo.social.fiverr}
         * Portfolio: ${developerInfo.social.portfolio}
 
+      IMPORTANT PROJECT LINKS:
+      - Mighty Strikers Live: ${developerInfo.projects[0].liveLink}
+      - Mighty Strikers GitHub: ${developerInfo.projects[0].githubLink}
+      - Mighty Strikers Details: ${developerInfo.projects[0].detailsLink}
+
       IMPORTANT FORMATTING INSTRUCTIONS:
       - When mentioning URLs or emails, ALWAYS include the full URL or email address in your response
+      - For Mighty Strikers project, always mention it's built with Next.js and include the live link
       - For GitHub, always include: ${developerInfo.social.github}
       - For LinkedIn, always include: ${developerInfo.social.linkedin}
       - For Facebook, always include: ${developerInfo.social.facebook}
@@ -261,19 +299,21 @@ const Hero = () => {
 
       CRITICAL URL FORMATTING:
       - When including URLs in your response, make sure they are separated by spaces and don't include trailing commas or periods
-      - Example: "You can find me on GitHub at ${developerInfo.social.github} and LinkedIn at ${developerInfo.social.linkedin}"
-      - BAD: "Visit ${developerInfo.social.github}, and ${developerInfo.social.linkedin}."
-      - GOOD: "Visit ${developerInfo.social.github} and ${developerInfo.social.linkedin}"
+      - Example: "You can find me on GitHub at ${developerInfo.social.github} and check my Mighty Strikers project at ${developerInfo.projects[0].liveLink}"
+      - BAD: "Visit ${developerInfo.social.github}, and ${developerInfo.projects[0].liveLink}."
+      - GOOD: "Visit ${developerInfo.social.github} and ${developerInfo.projects[0].liveLink}"
 
       Answer questions about Udoy professionally and helpfully. Keep responses concise but informative (2-4 sentences). 
       Be enthusiastic but professional. If asked about something not in the provided information, politely redirect to what you can discuss.
 
+      When someone asks about projects, especially mention Mighty Strikers as it's a flagship Next.js project.
+
       Example responses:
-      - "I specialize in MERN stack development and have built several projects including..."
-      - "My experience includes 2+ years working with React and Node.js..."
-      - "I'm currently available for freelance projects and would love to discuss opportunities..."
-      - "You can find me on GitHub at ${developerInfo.social.github} and LinkedIn at ${developerInfo.social.linkedin}"
-      - "I studied at Dhaka College and completed my BSc in Mathematics there."`;
+      - "I specialize in MERN stack development and have built several projects including Mighty Strikers, a football platform built with Next.js..."
+      - "My experience includes 2+ years working with React and Node.js, and I recently built Mighty Strikers using Next.js..."
+      - "I'm currently available for freelance projects and would love to discuss opportunities. Check out my Mighty Strikers project at ${developerInfo.projects[0].liveLink}"
+      - "You can find me on GitHub at ${developerInfo.social.github} and see my Mighty Strikers project at ${developerInfo.projects[0].githubLink}"
+      - "I studied at Dhaka College and completed my BSc in Mathematics there while building projects like Mighty Strikers."`;
 
       const completion = await groq.chat.completions.create({
         messages: [
@@ -334,8 +374,9 @@ const Hero = () => {
     }
   };
 
-  // Quick questions suggestions
+  // Quick questions suggestions including Mighty Strikers
   const quickQuestions = [
+    "Tell me about Mighty Strikers project",
     "What projects have you worked on?",
     "Are you available for work?",
     "What are your social media links?",
@@ -450,7 +491,7 @@ const Hero = () => {
             <div className="ml-auto text-xs text-gray-400">Online</div>
           </div>
 
-          {/* Chat Messages - Now with proper ref */}
+          {/* Chat Messages */}
           <div 
             ref={chatContainerRef}
             className="flex-1 overflow-y-auto p-4 space-y-4 
