@@ -181,7 +181,7 @@ const AdminDashboard = () => {
                 <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/50">
                     {/* Tab Navigation */}
                     <div className="border-b border-gray-700/50">
-                        <nav className="flex space-x-8 px-6">
+                        <nav className="flex space-x-8 px-6 overflow-x-auto">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}

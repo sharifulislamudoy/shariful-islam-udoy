@@ -214,7 +214,7 @@ const Projects = () => {
                                             </div>
 
                                             {/* Project Footer */}
-                                            <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
+                                            <div className="flex items-center pt-4 border-t border-gray-700/50 flex-col-reverse md:flex-row gap-4">
                                                 <div className="flex items-center gap-4 text-sm text-gray-400">
                                                     <div className="flex items-center gap-1">
                                                         <Calendar size={16} />
@@ -222,7 +222,7 @@ const Projects = () => {
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-3 ">
                                                     {/* View Details Button */}
                                                     <motion.button
                                                         whileHover={{ scale: 1.05 }}

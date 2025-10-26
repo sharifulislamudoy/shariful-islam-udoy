@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router';
 import { ArrowLeft, ExternalLink, Github, Calendar, Code, Users, Clock, Target } from 'lucide-react';
@@ -17,6 +18,11 @@ const ProjectDetails = () => {
     if (!project) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+                <Helmet>
+                    <title>Project Not Found | SHARIF.</title>
+                    <meta name="description" content="The requested project could not be found. Browse other projects in my portfolio." />
+                    <meta name="robots" content="noindex, follow" />
+                </Helmet>
                 <div className="text-center">
                     <h2 className="text-2xl text-white mb-4">Project Not Found</h2>
                     <button
@@ -29,6 +35,21 @@ const ProjectDetails = () => {
             </div>
         );
     }
+
+    // Create SEO-friendly URL slug from project title
+    const createSlug = (title) => {
+        return title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    };
+
+    const projectSlug = createSlug(project.title);
+    const canonicalUrl = `https://sharif.com/projects/${projectSlug}`;
+    const pageTitle = `${project.title} | ${project.category} Project | SHARIF.`;
+    const pageDescription = project.detailedDescription || project.description;
+    const keywords = `${project.technologies.join(', ')}, ${project.category}, web development, portfolio, ${project.title}`;
 
     const getCategoryColor = (category) => {
         const colors = {
@@ -69,6 +90,64 @@ const ProjectDetails = () => {
             variants={containerVariants}
             className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20 px-6 md:px-12 lg:px-24"
         >
+            {/* React Helmet for SEO Meta Tags */}
+            <Helmet>
+                {/* Basic Meta Tags */}
+                <title>{pageTitle}</title>
+                <meta name="description" content={pageDescription} />
+                <meta name="keywords" content={keywords} />
+                <link rel="canonical" href={canonicalUrl} />
+
+                {/* Open Graph Meta Tags */}
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDescription} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={canonicalUrl} />
+                {project.screenshots && project.screenshots.length > 0 && (
+                    <meta property="og:image" content={project.screenshots[0]} />
+                )}
+                <meta property="og:site_name" content="SHARIF." />
+
+                {/* Twitter Card Meta Tags */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={pageDescription} />
+                {project.screenshots && project.screenshots.length > 0 && (
+                    <meta name="twitter:image" content={project.screenshots[0]} />
+                )}
+                <meta name="twitter:site" content="@sharif" />
+
+                {/* Additional SEO Meta Tags */}
+                <meta name="author" content="Sharif" />
+                <meta name="robots" content="index, follow, max-image-preview:large" />
+                <meta name="language" content="en" />
+                <meta name="revisit-after" content="7 days" />
+
+                {/* Structured Data for Rich Snippets */}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "SoftwareApplication",
+                        "name": project.title,
+                        "description": pageDescription,
+                        "applicationCategory": "DeveloperApplication",
+                        "operatingSystem": "Web",
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "USD"
+                        },
+                        "author": {
+                            "@type": "Person",
+                            "name": "Sharif"
+                        },
+                        "datePublished": project.date,
+                        "softwareVersion": "1.0",
+                        "keywords": keywords
+                    })}
+                </script>
+            </Helmet>
+
             <CustomCursor />
             <div className="max-w-6xl mx-auto">
                 {/* Back Button */}
@@ -196,6 +275,7 @@ const ProjectDetails = () => {
                                                 src={screenshot}
                                                 alt={`${project.title} screenshot ${index + 1}`}
                                                 className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                                loading="lazy"
                                             />
                                         </div>
                                     ))}
@@ -249,6 +329,7 @@ const ProjectDetails = () => {
                                 </div>
                             </div>
                         </motion.div>
+                        
                         {/* Challenges & Lessons */}
                         <motion.div
                             variants={itemVariants}

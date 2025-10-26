@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shariful-islam-udoy.vercel.app/sitemap.xml
