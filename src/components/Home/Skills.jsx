@@ -85,7 +85,7 @@ const Skills = () => {
             variants={containerVariants}
             className="py-16 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-t border-gray-800"
         >
-            <div className="max-w-6xl mx-auto">
+            <div className="w-11/12 mx-auto">
                 {/* Section Header */}
                 <motion.div
                     variants={itemVariants}
@@ -105,13 +105,13 @@ const Skills = () => {
                         initial={{ opacity: 0, width: 0 }}
                         animate={inView ? { opacity: 1, width: 80 } : {}}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full w-20 mt-4"
+                        className="h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto rounded-full w-24"
                     />
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={inView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-lg text-gray-400 max-w-2xl mx-auto"
+                        className="text-lg text-gray-400 max-w-2xl mx-auto mt-6"
                     >
                         Technologies and tools I work with to create amazing digital experiences
                     </motion.p>
