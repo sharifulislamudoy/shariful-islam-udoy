@@ -42,6 +42,20 @@ const Hero = () => {
     email: "sharifulislamudoy56@gmail.com",
     phone: "+880 19953 22033",
     whatsapp: "https://wa.me/8801995322033",
+    achievements: [
+      {
+        name: "Programming Hero Certificate",
+        description: "Completed comprehensive web development course with excellent performance",
+        certificateLink: "https://drive.google.com/file/d/1Qa7Xyx-lOn6JfPmG5EzlyTYj9kzz64z9/view?usp=drive_link",
+        platform: "Programming Hero"
+      },
+      {
+        name: "NSDA Certificate",
+        description: "Achieved certification in software development and algorithms",
+        certificateLink: "https://drive.google.com/file/d/1pOIytWLfQ7KZLyiXvhNYGexRU9GHNz8V/view?usp=drive_link",
+        platform: "NSDA"
+      }
+    ],
     projects: [
       {
         name: "Mighty Striker",
@@ -85,9 +99,10 @@ const Hero = () => {
     // Regular expressions for different types of links
     const urlRegex = /(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])/g;
     const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
+    const certificateRegex = /(CERTIFICATE_LINK_[A-Z_]+)/g;
 
     // Split by both URLs and emails while preserving the delimiters
-    const parts = text.split(/(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])|([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+    const parts = text.split(/(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])|([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)|(CERTIFICATE_LINK_[A-Z_]+)/gi);
 
     return parts.map((part, index) => {
       if (!part) return null;
@@ -104,6 +119,7 @@ const Hero = () => {
         else if (url.includes('vercel.app') || url.includes('portfolio')) platformName = 'Portfolio';
         else if (url.includes('wa.me')) platformName = 'WhatsApp';
         else if (url.includes('mighty-strikers')) platformName = 'Mighty Strikers';
+        else if (url.includes('drive.google.com')) platformName = 'Certificate';
 
         return (
           <a
@@ -130,6 +146,28 @@ const Hero = () => {
             Email
           </a>
         );
+      }
+      // Check if part is a certificate placeholder
+      else if (part.match(certificateRegex)) {
+        const certificateType = part.replace('CERTIFICATE_LINK_', '').toLowerCase();
+        const achievement = developerInfo.achievements.find(a => 
+          a.platform.toLowerCase().replace(' ', '_') === certificateType
+        );
+        
+        if (achievement) {
+          return (
+            <a
+              key={index}
+              href={achievement.certificateLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {achievement.platform} Certificate
+            </a>
+          );
+        }
       }
       // Regular text
       return part;
@@ -171,7 +209,7 @@ const Hero = () => {
     if (hasInitialized) return;
 
     const timer = setTimeout(() => {
-      const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects and more! What would you like to know about him?`;
+      const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, achievements and more! What would you like to know about him?`;
       const initialMessageId = 1;
 
       typeMessage(initialMessage, initialMessageId, () => {
@@ -240,7 +278,7 @@ const Hero = () => {
     setIsLoading(true);
 
     try {
-      // System prompt with your information including Mighty Strikers project
+      // System prompt with your information including achievements
       const systemPrompt = `You are an AI assistant for Shariful Islam Udoy (Udoy), a full stack developer. 
       
       IMPORTANT: Always respond as if you ARE Udoy's assistant. Use "I", "my", "me" when referring to Udoy's qualifications and experience.
@@ -256,6 +294,11 @@ const Hero = () => {
       - Phone: ${developerInfo.phone}
       - WhatsApp: ${developerInfo.whatsapp}
       
+      ACHIEVEMENTS & CERTIFICATIONS:
+      ${developerInfo.achievements.map(achievement => 
+        `- ${achievement.platform}: ${achievement.description} - CERTIFICATE_LINK_${achievement.platform.toUpperCase().replace(' ', '_')}`
+      ).join('\n')}
+
       PROJECTS (Pay special attention to Mighty Strikers):
       ${developerInfo.projects.map(project => {
         if (typeof project === 'object' && project.name === "Mighty Striker") {
@@ -281,13 +324,16 @@ const Hero = () => {
         * Fiverr: ${developerInfo.social.fiverr}
         * Portfolio: ${developerInfo.social.portfolio}
 
-      IMPORTANT PROJECT LINKS:
+      IMPORTANT LINKS:
       - Mighty Strikers Live: ${developerInfo.projects[0].liveLink}
       - Mighty Strikers GitHub: ${developerInfo.projects[0].githubLink}
       - Mighty Strikers Details: ${developerInfo.projects[0].detailsLink}
+      - Programming Hero Certificate: CERTIFICATE_LINK_PROGRAMMING_HERO
+      - NSDA Certificate: CERTIFICATE_LINK_NSDA
 
       IMPORTANT FORMATTING INSTRUCTIONS:
       - When mentioning URLs or emails, ALWAYS include the full URL or email address in your response
+      - For certificates, use the placeholder format: CERTIFICATE_LINK_PLATFORM_NAME
       - For Mighty Strikers project, always mention it's built with Next.js and include the live link
       - For GitHub, always include: ${developerInfo.social.github}
       - For LinkedIn, always include: ${developerInfo.social.linkedin}
@@ -299,21 +345,23 @@ const Hero = () => {
 
       CRITICAL URL FORMATTING:
       - When including URLs in your response, make sure they are separated by spaces and don't include trailing commas or periods
-      - Example: "You can find me on GitHub at ${developerInfo.social.github} and check my Mighty Strikers project at ${developerInfo.projects[0].liveLink}"
-      - BAD: "Visit ${developerInfo.social.github}, and ${developerInfo.projects[0].liveLink}."
-      - GOOD: "Visit ${developerInfo.social.github} and ${developerInfo.projects[0].liveLink}"
+      - Example: "You can find me on GitHub at ${developerInfo.social.github} and check my Programming Hero certificate at CERTIFICATE_LINK_PROGRAMMING_HERO"
+      - BAD: "Visit ${developerInfo.social.github}, and CERTIFICATE_LINK_PROGRAMMING_HERO."
+      - GOOD: "Visit ${developerInfo.social.github} and CERTIFICATE_LINK_PROGRAMMING_HERO"
 
       Answer questions about Udoy professionally and helpfully. Keep responses concise but informative (2-4 sentences). 
       Be enthusiastic but professional. If asked about something not in the provided information, politely redirect to what you can discuss.
 
-      When someone asks about projects, especially mention Mighty Strikers as it's a flagship Next.js project.
+      When someone asks about achievements or certificates, mention both Programming Hero and NSDA certificates with their links.
 
       Example responses:
-      - "I specialize in MERN stack development and have built several projects including Mighty Strikers, a football platform built with Next.js..."
+      - "I have completed the Programming Hero web development course and you can view my certificate at CERTIFICATE_LINK_PROGRAMMING_HERO"
+      - "My achievements include completing the Programming Hero course CERTIFICATE_LINK_PROGRAMMING_HERO and NSDA certification CERTIFICATE_LINK_NSDA"
+      - "I specialize in MERN stack development and have built several projects including Mighty Strikers, a cricket platform built with Next.js..."
       - "My experience includes 2+ years working with React and Node.js, and I recently built Mighty Strikers using Next.js..."
       - "I'm currently available for freelance projects and would love to discuss opportunities. Check out my Mighty Strikers project at ${developerInfo.projects[0].liveLink}"
-      - "You can find me on GitHub at ${developerInfo.social.github} and see my Mighty Strikers project at ${developerInfo.projects[0].githubLink}"
-      - "I studied at Dhaka College and completed my BSc in Mathematics there while building projects like Mighty Strikers."`;
+      - "You can find me on GitHub at ${developerInfo.social.github} and see my Programming Hero certificate at CERTIFICATE_LINK_PROGRAMMING_HERO"
+      - "I studied at Dhaka College and completed my BSc in Mathematics there while building projects like Mighty Strikers and earning certifications from Programming Hero CERTIFICATE_LINK_PROGRAMMING_HERO and NSDA CERTIFICATE_LINK_NSDA"`;
 
       const completion = await groq.chat.completions.create({
         messages: [
@@ -374,10 +422,10 @@ const Hero = () => {
     }
   };
 
-  // Quick questions suggestions including Mighty Strikers
+  // Quick questions suggestions including achievements
   const quickQuestions = [
-    "Tell me about Mighty Strikers project",
-    "What projects have you worked on?",
+    "What certificates do you have?",
+    "Show me your achievements",
     "Are you available for work?",
     "What are your social media links?",
   ];
@@ -396,7 +444,7 @@ const Hero = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="min-h-screen flex flex-col lg:flex-row items-center justify-between px-6 md:px-12 lg:px-24 bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20"
+      className="min-h-screen flex flex-col lg:flex-row items-center justify-between lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20"
     >
       {/* Left Side - Content */}
       <motion.div
@@ -592,7 +640,7 @@ const Hero = () => {
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask about my skills, experience, projects..."
+                placeholder="Ask about my skills, experience, projects, certificates..."
                 className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 disabled={isLoading || isTyping}
               />

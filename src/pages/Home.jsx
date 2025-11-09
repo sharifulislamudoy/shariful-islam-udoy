@@ -9,6 +9,7 @@ import Projects from '../components/Home/Projects';
 import Education from '../components/Home/Education';
 import Contact from '../components/Home/Contact';
 import MessageButton from '../components/Home/MessageButton';
+import Achievements from '../components/Home/Achievments';
 
 
 
@@ -36,6 +37,7 @@ const Home = () => {
             <Projects key="projects" />
             <Experience key="experience" />
             <Education key="education" />
+            <Achievements key="achievement" />
             <Contact key="contact" />
             <MessageButton />
           </>

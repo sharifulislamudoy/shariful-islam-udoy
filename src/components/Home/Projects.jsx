@@ -90,7 +90,7 @@ const Projects = () => {
 
     if (loading) {
         return (
-            <section className="min-h-screen py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+            <section className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
                 <div className="text-center">
                     <RefreshCw size={48} className="text-blue-400 animate-spin mx-auto mb-4" />
                     <p className="text-gray-400 text-xl">Loading projects...</p>
@@ -106,9 +106,9 @@ const Projects = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="min-h-screen py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-br from-gray-900 via-black to-gray-900"
+            className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900"
         >
-            <div className="max-w-7xl mx-auto">
+            <div className="w-11/12 mx-auto">
                 {/* Section Header */}
                 <motion.div
                     variants={itemVariants}
@@ -222,7 +222,7 @@ const Projects = () => {
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="flex items-center gap-3 ">
+                                                <div className="flex items-center gap-3 flex-wrap  ">
                                                     {/* View Details Button */}
                                                     <motion.button
                                                         whileHover={{ scale: 1.05 }}

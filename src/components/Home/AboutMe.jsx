@@ -77,9 +77,9 @@ const AboutMe = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="min-h-screen py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-br from-gray-900 via-black to-gray-900"
+            className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900"
         >
-            <div className="max-w-7xl mx-auto">
+            <div className="w-11/12 mx-auto">
                 {/* Section Header */}
                 <motion.div
                     variants={itemVariants}

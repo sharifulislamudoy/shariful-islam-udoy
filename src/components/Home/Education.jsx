@@ -15,51 +15,27 @@ const Education = () => {
             institution: "Dhaka College",
             duration: "2022 - Present",
             location: "Dhaka, Bangladesh",
-            grade: "CGPA: 3.8/4.0",
             description: "Specializing in Applied Mathematics and Computational Methods. Relevant coursework includes Advanced Calculus, Linear Algebra, Probability Theory, and Numerical Analysis.",
             icon: GraduationCap,
             color: "from-blue-500 to-cyan-500"
         },
         {
             degree: "Higher Secondary Certificate (HSC)",
-            institution: "Dhaka College",
+            institution: "R.K Chowdhury University & College",
             duration: "2019 - 2021",
             location: "Dhaka, Bangladesh",
-            grade: "GPA: 5.0/5.0",
             description: "Science Group with focus on Physics, Chemistry, and Higher Mathematics. Achieved perfect GPA with distinction in Mathematics.",
             icon: Award,
             color: "from-purple-500 to-pink-500"
         },
         {
             degree: "Secondary School Certificate (SSC)",
-            institution: "Motijheel Govt. Boys' High School",
+            institution: "Jurain Ashraf Master Adasha High School",
             duration: "2017 - 2019",
             location: "Dhaka, Bangladesh",
-            grade: "GPA: 5.0/5.0",
             description: "Science Group with outstanding performance in Mathematics and Computer Science. Received General Scholarship for academic excellence.",
             icon: BookOpen,
             color: "from-green-500 to-emerald-500"
-        }
-    ];
-
-    const certifications = [
-        {
-            title: "Full Stack Web Development",
-            issuer: "Programming Hero",
-            year: "2023",
-            icon: Award
-        },
-        {
-            title: "React & Next.js Mastery",
-            issuer: "Udemy",
-            year: "2023",
-            icon: Award
-        },
-        {
-            title: "MongoDB University",
-            issuer: "MongoDB Inc.",
-            year: "2022",
-            icon: Award
         }
     ];
 
@@ -112,9 +88,9 @@ const Education = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="min-h-screen py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-br from-gray-900 via-black to-gray-900"
+            className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900"
         >
-            <div className="max-w-7xl mx-auto">
+            <div className="w-11/12 mx-auto">
                 {/* Section Header */}
                 <motion.div
                     variants={itemVariants}
@@ -186,10 +162,6 @@ const Education = () => {
                                     <div className="flex items-center gap-2 text-gray-300">
                                         <MapPin size={16} className="text-blue-400" />
                                         <span className="text-sm">{edu.location}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-green-400">
-                                        <Award size={16} />
-                                        <span className="text-sm font-semibold">{edu.grade}</span>
                                     </div>
                                 </div>
 
