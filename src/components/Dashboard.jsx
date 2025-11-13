@@ -148,7 +148,7 @@ const AdminDashboard = () => {
                 </div>
             </header>
 
-            <div className="w-11/12 mx-auto px-6 py-8">
+            <div className="w-11/12 mx-auto py-8">
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <StatCard

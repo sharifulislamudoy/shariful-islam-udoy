@@ -28,7 +28,15 @@ const Achievements = () => {
             previewType: "certificate",
             color: "from-yellow-500 to-orange-500"
         },
-        // ... other achievements
+        {
+            title: "Recommendation Letter",
+            organization: "Programming Hero",
+            year: "2025",
+            description: "Recognized for outstanding academic performance with perfect GPA in consecutive semesters. Maintained top 2% of the class.",
+            driveLink: "https://drive.google.com/file/d/1HK_2EhwGuGfiaNsKaC1twq-MVER1LW2v/view?usp=sharing",
+            previewType: "certificate",
+            color: "from-blue-500 to-emerald-500"
+        },
     ];
 
     // Function to get direct download link (works for publicly accessible files)
@@ -77,12 +85,6 @@ const Achievements = () => {
             // Fallback to opening in new tab
             window.open(driveLink, '_blank');
         }
-    };
-
-    // Function to handle opening in drive
-    const handleOpenInDrive = (driveLink) => {
-        // Always open in new tab for better user experience
-        window.open(driveLink, '_blank', 'noopener,noreferrer');
     };
 
     const containerVariants = {

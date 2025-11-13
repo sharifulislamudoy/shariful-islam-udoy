@@ -27,7 +27,7 @@ const Hero = () => {
 
   // Initialize Groq client
   const groq = new Groq({
-    apiKey: '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',
+    apiKey: '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',
     dangerouslyAllowBrowser: true
   });
 
@@ -54,6 +54,24 @@ const Hero = () => {
         description: "Achieved certification in software development and algorithms",
         certificateLink: "https://drive.google.com/file/d/1pOIytWLfQ7KZLyiXvhNYGexRU9GHNz8V/view?usp=drive_link",
         platform: "NSDA"
+      },
+      {
+        name: "Recommendation Letter",
+        description: "Strong recommendation letter from Programming Hero recognizing outstanding performance, dedication, and technical skills",
+        certificateLink: "https://drive.google.com/file/d/1HK_2EhwGuGfiaNsKaC1twq-MVER1LW2v/view?usp=sharing",
+        platform: "Programming Hero",
+        type: "Recommendation Letter",
+        details: {
+          issuer: "Programming Hero",
+          date: "2025",
+          highlights: [
+            "Outstanding performance in web development course",
+            "Exceptional problem-solving skills",
+            "Strong dedication and commitment",
+            "Excellent technical capabilities",
+            "Great potential for software development career"
+          ]
+        }
       }
     ],
     projects: [
@@ -100,9 +118,10 @@ const Hero = () => {
     const urlRegex = /(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])/g;
     const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
     const certificateRegex = /(CERTIFICATE_LINK_[A-Z_]+)/g;
+    const recommendationRegex = /(RECOMMENDATION_LINK)/g;
 
     // Split by both URLs and emails while preserving the delimiters
-    const parts = text.split(/(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])|([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)|(CERTIFICATE_LINK_[A-Z_]+)/gi);
+    const parts = text.split(/(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])|([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)|(CERTIFICATE_LINK_[A-Z_]+)|(RECOMMENDATION_LINK)/gi);
 
     return parts.map((part, index) => {
       if (!part) return null;
@@ -169,6 +188,24 @@ const Hero = () => {
           );
         }
       }
+      // Check if part is a recommendation placeholder
+      else if (part.match(recommendationRegex)) {
+        const recommendation = developerInfo.achievements.find(a => a.type === "Recommendation Letter");
+        if (recommendation) {
+          return (
+            <a
+              key={index}
+              href={recommendation.certificateLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Recommendation Letter
+            </a>
+          );
+        }
+      }
       // Regular text
       return part;
     });
@@ -209,7 +246,7 @@ const Hero = () => {
     if (hasInitialized) return;
 
     const timer = setTimeout(() => {
-      const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, achievements and more! What would you like to know about him?`;
+      const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, achievements, recommendation letter and more! What would you like to know about him?`;
       const initialMessageId = 1;
 
       typeMessage(initialMessage, initialMessageId, () => {
@@ -278,7 +315,7 @@ const Hero = () => {
     setIsLoading(true);
 
     try {
-      // System prompt with your information including achievements
+      // System prompt with your information including achievements and recommendation letter
       const systemPrompt = `You are an AI assistant for Shariful Islam Udoy (Udoy), a full stack developer. 
       
       IMPORTANT: Always respond as if you ARE Udoy's assistant. Use "I", "my", "me" when referring to Udoy's qualifications and experience.
@@ -295,9 +332,16 @@ const Hero = () => {
       - WhatsApp: ${developerInfo.whatsapp}
       
       ACHIEVEMENTS & CERTIFICATIONS:
-      ${developerInfo.achievements.map(achievement =>
-        `- ${achievement.platform}: ${achievement.description} - CERTIFICATE_LINK_${achievement.platform.toUpperCase().replace(' ', '_')}`
-      ).join('\n')}
+      ${developerInfo.achievements.map(achievement => {
+        if (achievement.type === "Recommendation Letter") {
+          return `- RECOMMENDATION LETTER: ${achievement.description}
+          Issuer: ${achievement.details.issuer}
+          Date: ${achievement.details.date}
+          Highlights: ${achievement.details.highlights.join(', ')}
+          Link: RECOMMENDATION_LINK`;
+        }
+        return `- ${achievement.platform}: ${achievement.description} - CERTIFICATE_LINK_${achievement.platform.toUpperCase().replace(' ', '_')}`;
+      }).join('\n')}
 
       PROJECTS (Pay special attention to Mighty Strikers):
       ${developerInfo.projects.map(project => {
@@ -330,10 +374,20 @@ const Hero = () => {
       - Mighty Strikers Details: ${developerInfo.projects[0].detailsLink}
       - Programming Hero Certificate: CERTIFICATE_LINK_PROGRAMMING_HERO
       - NSDA Certificate: CERTIFICATE_LINK_NSDA
+      - Recommendation Letter: RECOMMENDATION_LINK
+
+      RECOMMENDATION LETTER DETAILS:
+      - I have a strong recommendation letter from Programming Hero
+      - It recognizes my outstanding performance in their web development course
+      - Highlights my exceptional problem-solving skills and dedication
+      - Commends my technical capabilities and potential
+      - Issued in 2025 by Programming Hero
+      - You can view it at: RECOMMENDATION_LINK
 
       IMPORTANT FORMATTING INSTRUCTIONS:
       - When mentioning URLs or emails, ALWAYS include the full URL or email address in your response
       - For certificates, use the placeholder format: CERTIFICATE_LINK_PLATFORM_NAME
+      - For recommendation letter, use: RECOMMENDATION_LINK
       - For Mighty Strikers project, always mention it's built with Next.js and include the live link
       - For GitHub, always include: ${developerInfo.social.github}
       - For LinkedIn, always include: ${developerInfo.social.linkedin}
@@ -345,23 +399,29 @@ const Hero = () => {
 
       CRITICAL URL FORMATTING:
       - When including URLs in your response, make sure they are separated by spaces and don't include trailing commas or periods
-      - Example: "You can find me on GitHub at ${developerInfo.social.github} and check my Programming Hero certificate at CERTIFICATE_LINK_PROGRAMMING_HERO"
-      - BAD: "Visit ${developerInfo.social.github}, and CERTIFICATE_LINK_PROGRAMMING_HERO."
-      - GOOD: "Visit ${developerInfo.social.github} and CERTIFICATE_LINK_PROGRAMMING_HERO"
+      - Example: "You can find me on GitHub at ${developerInfo.social.github} and check my recommendation letter at RECOMMENDATION_LINK"
+      - BAD: "Visit ${developerInfo.social.github}, and RECOMMENDATION_LINK."
+      - GOOD: "Visit ${developerInfo.social.github} and RECOMMENDATION_LINK"
 
       Answer questions about Udoy professionally and helpfully. Keep responses concise but informative (2-4 sentences). 
       Be enthusiastic but professional. If asked about something not in the provided information, politely redirect to what you can discuss.
 
-      When someone asks about achievements or certificates, mention both Programming Hero and NSDA certificates with their links.
+      When someone asks about achievements or certificates, mention:
+      - Programming Hero certificate (CERTIFICATE_LINK_PROGRAMMING_HERO)
+      - NSDA certificate (CERTIFICATE_LINK_NSDA)
+      - Recommendation letter from Programming Hero (RECOMMENDATION_LINK)
+
+      When someone asks specifically about recommendation letters or references, provide details about the Programming Hero recommendation letter.
 
       Example responses:
-      - "I have completed the Programming Hero web development course and you can view my certificate at CERTIFICATE_LINK_PROGRAMMING_HERO"
-      - "My achievements include completing the Programming Hero course CERTIFICATE_LINK_PROGRAMMING_HERO and NSDA certification CERTIFICATE_LINK_NSDA"
+      - "I have completed the Programming Hero web development course and you can view my certificate at CERTIFICATE_LINK_PROGRAMMING_HERO and my recommendation letter at RECOMMENDATION_LINK"
+      - "My achievements include completing the Programming Hero course CERTIFICATE_LINK_PROGRAMMING_HERO, NSDA certification CERTIFICATE_LINK_NSDA, and a strong recommendation letter from Programming Hero RECOMMENDATION_LINK"
+      - "I have a recommendation letter from Programming Hero that highlights my outstanding performance, problem-solving skills, and technical capabilities. You can view it at RECOMMENDATION_LINK"
       - "I specialize in MERN stack development and have built several projects including Mighty Strikers, a cricket platform built with Next.js..."
       - "My experience includes 2+ years working with React and Node.js, and I recently built Mighty Strikers using Next.js..."
       - "I'm currently available for freelance projects and would love to discuss opportunities. Check out my Mighty Strikers project at ${developerInfo.projects[0].liveLink}"
-      - "You can find me on GitHub at ${developerInfo.social.github} and see my Programming Hero certificate at CERTIFICATE_LINK_PROGRAMMING_HERO"
-      - "I studied at Dhaka College and completed my BSc in Mathematics there while building projects like Mighty Strikers and earning certifications from Programming Hero CERTIFICATE_LINK_PROGRAMMING_HERO and NSDA CERTIFICATE_LINK_NSDA"`;
+      - "You can find me on GitHub at ${developerInfo.social.github} and see my Programming Hero certificate at CERTIFICATE_LINK_PROGRAMMING_HERO and recommendation letter at RECOMMENDATION_LINK"
+      - "I studied at Dhaka College and completed my BSc in Mathematics there while building projects like Mighty Strikers and earning certifications from Programming Hero CERTIFICATE_LINK_PROGRAMMING_HERO and NSDA CERTIFICATE_LINK_NSDA, plus a recommendation letter RECOMMENDATION_LINK"`;
 
       const completion = await groq.chat.completions.create({
         messages: [
@@ -422,10 +482,11 @@ const Hero = () => {
     }
   };
 
-  // Quick questions suggestions including achievements
+  // Quick questions suggestions including achievements and recommendation
   const quickQuestions = [
     "What certificates do you have?",
     "Show me your achievements",
+    "Do you have a recommendation letter?",
     "Are you available for work?",
     "What are your social media links?",
   ];
@@ -444,7 +505,7 @@ const Hero = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="min-h-screen  bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20"
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20"
     >
       <div className='flex flex-col lg:flex-row items-center w-11/12 mx-auto lg:px-13'>
         {/* Left Side - Content */}
@@ -641,7 +702,7 @@ const Hero = () => {
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about my skills, experience, projects, certificates..."
+                  placeholder="Ask about my skills, experience, projects, certificates, recommendation letter..."
                   className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   disabled={isLoading || isTyping}
                 />
