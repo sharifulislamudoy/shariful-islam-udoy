@@ -27,7 +27,7 @@ const Hero = () => {
 
   // Initialize Groq client
   const groq = new Groq({
-    apiKey: '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',
+    apiKey: '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',
     dangerouslyAllowBrowser: true
   });
 
