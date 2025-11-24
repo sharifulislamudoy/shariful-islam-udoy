@@ -12,7 +12,6 @@ const Hero = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [typingMessage, setTypingMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [currentTypingId, setCurrentTypingId] = useState(null);
   const [hasInitialized, setHasInitialized] = useState(false);
   const chatEndRef = useRef(null);
   const chatContainerRef = useRef(null);
@@ -216,7 +215,6 @@ const Hero = () => {
   // Function to simulate typing effect for bot messages
   const typeMessage = (message, messageId, callback) => {
     setIsTyping(true);
-    setCurrentTypingId(messageId);
     setTypingMessage('');
     let index = 0;
 
@@ -232,7 +230,6 @@ const Hero = () => {
       } else {
         clearInterval(typingInterval);
         setIsTyping(false);
-        setCurrentTypingId(null);
         if (callback) callback();
       }
     }, 20);
