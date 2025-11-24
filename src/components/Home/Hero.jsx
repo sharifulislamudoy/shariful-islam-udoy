@@ -25,7 +25,7 @@ const Hero = () => {
     "React.js Specialist"
   ];
 
-  const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+  const GROQ_API_KEY = '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';
 
   // Initialize Groq client
   const groq = new Groq({
