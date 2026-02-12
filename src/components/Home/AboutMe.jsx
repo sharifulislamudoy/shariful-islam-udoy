@@ -22,13 +22,6 @@ const AboutMe = () => {
         triggerOnce: true
     });
 
-    const stats = [
-        { icon: Clock, value: '2+ Years', label: 'Experience' },
-        { icon: Award, value: '15+', label: 'Projects' },
-        { icon: Globe, value: '5+', label: 'Technologies' },
-        { icon: Smartphone, value: '10+', label: 'Clients' }
-    ];
-
     const skills = [
         { name: 'Frontend', technologies: ['React.js', 'Next.js', 'TypeScript', 'Tailwind CSS'], icon: Palette },
         { name: 'Backend', technologies: ['Node.js', 'Express.js', 'MongoDB', 'REST APIs'], icon: Server },
@@ -77,7 +70,7 @@ const AboutMe = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900"
+            className="py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 mb-10"
         >
             <div className="w-11/12 mx-auto">
                 {/* Section Header */}
@@ -187,7 +180,7 @@ const AboutMe = () => {
                     {/* Right Side - Content */}
                     <motion.div
                         variants={containerVariants}
-                        className="lg:w-3/5 space-y-8"
+                        className="lg:w-3/5"
                     >
                         {/* Introduction */}
                         <motion.div variants={itemVariants}>

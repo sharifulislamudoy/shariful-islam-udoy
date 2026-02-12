@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Code, Database, Palette, Rocket, Send, User, Bot } from 'lucide-react';
-import Groq from 'groq-sdk';
 
 const Hero = () => {
   const [displayText, setDisplayText] = useState('');
@@ -13,6 +12,7 @@ const Hero = () => {
   const [typingMessage, setTypingMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [hasGroqError, setHasGroqError] = useState(false);
   const chatEndRef = useRef(null);
   const chatContainerRef = useRef(null);
   const heroRef = useRef(null);
@@ -26,11 +26,49 @@ const Hero = () => {
 
   const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
-  // Initialize Groq client
-  const groq = new Groq({
-    apiKey: GROQ_API_KEY,
-    dangerouslyAllowBrowser: true
-  });
+  // Check for API key on component mount
+  useEffect(() => {
+    if (!GROQ_API_KEY) {
+      console.warn('GROQ_API_KEY is missing. Chat functionality will be limited.');
+      setHasGroqError(true);
+      
+      // Show initial message even without API key
+      const timer = setTimeout(() => {
+        const initialMessage = `Hi! I'm Udoy's assistant. The chat feature requires a GROQ API key to work fully. However, you can still learn about me through the quick questions below!`;
+        const initialMessageId = 1;
+        
+        setTypingMessage('');
+        setHasInitialized(true);
+        setChatMessages([
+          {
+            id: initialMessageId,
+            text: initialMessage,
+            isBot: true,
+            timestamp: new Date()
+          }
+        ]);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // Initialize Groq client only if API key exists
+  const getGroqClient = () => {
+    if (!GROQ_API_KEY || hasGroqError) return null;
+    
+    try {
+      const Groq = require('groq-sdk');
+      return new Groq({
+        apiKey: GROQ_API_KEY,
+        dangerouslyAllowBrowser: true
+      });
+    } catch (error) {
+      console.error('Failed to initialize Groq client:', error);
+      setHasGroqError(true);
+      return null;
+    }
+  };
 
   // Your information for the AI
   const developerInfo = {
@@ -111,107 +149,6 @@ const Hero = () => {
     }
   };
 
-  // Improved function to render text with clickable links and emails
-  const renderTextWithEmailAndLinks = (text) => {
-    if (!text) return null;
-
-    // Regular expressions for different types of links
-    const urlRegex = /(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])/g;
-    const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi;
-    const certificateRegex = /(CERTIFICATE_LINK_[A-Z_]+)/g;
-    const recommendationRegex = /(RECOMMENDATION_LINK)/g;
-
-    // Split by both URLs and emails while preserving the delimiters
-    const parts = text.split(/(https?:\/\/[^\s]+[^\s.,)])(?=\s|$|[,.)])|([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)|(CERTIFICATE_LINK_[A-Z_]+)|(RECOMMENDATION_LINK)/gi);
-
-    return parts.map((part, index) => {
-      if (!part) return null;
-
-      // Check if part is a URL
-      if (part.match(urlRegex)) {
-        const url = part.trim();
-        // Extract platform name from URL for better display
-        let platformName = 'Link';
-        if (url.includes('github.com')) platformName = 'GitHub';
-        else if (url.includes('linkedin.com')) platformName = 'LinkedIn';
-        else if (url.includes('facebook.com')) platformName = 'Facebook';
-        else if (url.includes('fiverr.com')) platformName = 'Fiverr';
-        else if (url.includes('vercel.app') || url.includes('portfolio')) platformName = 'Portfolio';
-        else if (url.includes('wa.me')) platformName = 'WhatsApp';
-        else if (url.includes('mighty-strikers')) platformName = 'Mighty Strikers';
-        else if (url.includes('drive.google.com')) platformName = 'Certificate';
-
-        return (
-          <a
-            key={index}
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {platformName}
-          </a>
-        );
-      }
-      // Check if part is an email
-      else if (part.match(emailRegex)) {
-        return (
-          <a
-            key={index}
-            href={`mailto:${part}`}
-            className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Email
-          </a>
-        );
-      }
-      // Check if part is a certificate placeholder
-      else if (part.match(certificateRegex)) {
-        const certificateType = part.replace('CERTIFICATE_LINK_', '').toLowerCase();
-        const achievement = developerInfo.achievements.find(a =>
-          a.platform.toLowerCase().replace(' ', '_') === certificateType
-        );
-
-        if (achievement) {
-          return (
-            <a
-              key={index}
-              href={achievement.certificateLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {achievement.platform} Certificate
-            </a>
-          );
-        }
-      }
-      // Check if part is a recommendation placeholder
-      else if (part.match(recommendationRegex)) {
-        const recommendation = developerInfo.achievements.find(a => a.type === "Recommendation Letter");
-        if (recommendation) {
-          return (
-            <a
-              key={index}
-              href={recommendation.certificateLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200 font-medium mx-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Recommendation Letter
-            </a>
-          );
-        }
-      }
-      // Regular text
-      return part;
-    });
-  };
-
   // Function to simulate typing effect for bot messages
   const typeMessage = (message, messageId, callback) => {
     setIsTyping(true);
@@ -242,7 +179,7 @@ const Hero = () => {
 
   // Initial bot message - delayed start
   useEffect(() => {
-    if (hasInitialized) return;
+    if (hasInitialized || hasGroqError) return;
 
     const timer = setTimeout(() => {
       const initialMessage = `Hi! I'm Udoy's AI assistant. I can tell you about his skills, experience, projects, achievements, recommendation letter and more! What would you like to know about him?`;
@@ -263,7 +200,7 @@ const Hero = () => {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [hasInitialized]);
+  }, [hasInitialized, hasGroqError]);
 
   // Scroll to bottom of chat - ONLY within chat container
   useEffect(() => {
@@ -313,8 +250,35 @@ const Hero = () => {
     setUserInput('');
     setIsLoading(true);
 
+    // If API key is missing, provide static responses
+    if (!GROQ_API_KEY || hasGroqError) {
+      setTimeout(() => {
+        const staticResponses = getStaticResponse(userInput);
+        const botMessageId = Date.now() + 1;
+        
+        typeMessage(staticResponses, botMessageId, () => {
+          const botMessage = {
+            id: botMessageId,
+            text: staticResponses,
+            isBot: true,
+            timestamp: new Date()
+          };
+          setChatMessages(prev => [...prev, botMessage]);
+          setTypingMessage('');
+          setIsLoading(false);
+        });
+      }, 500);
+      return;
+    }
+
     try {
-      // System prompt with your information including achievements and recommendation letter
+      // Get Groq client
+      const groq = getGroqClient();
+      if (!groq) {
+        throw new Error('Groq client not available');
+      }
+
+      // System prompt with your information
       const systemPrompt = `You are an AI assistant for Shariful Islam Udoy (Udoy), a full stack developer. 
       
       IMPORTANT: Always respond as if you ARE Udoy's assistant. Use "I", "my", "me" when referring to Udoy's qualifications and experience.
@@ -337,9 +301,9 @@ const Hero = () => {
           Issuer: ${achievement.details.issuer}
           Date: ${achievement.details.date}
           Highlights: ${achievement.details.highlights.join(', ')}
-          Link: RECOMMENDATION_LINK`;
+          Link: ${achievement.certificateLink}`;
         }
-        return `- ${achievement.platform}: ${achievement.description} - CERTIFICATE_LINK_${achievement.platform.toUpperCase().replace(' ', '_')}`;
+        return `- ${achievement.platform}: ${achievement.description} - ${achievement.certificateLink}`;
       }).join('\n')}
 
       PROJECTS (Pay special attention to Mighty Strikers):
@@ -356,71 +320,8 @@ const Hero = () => {
         return `- ${project}`;
       }).join('\n')}
 
-      - Programming Languages: ${developerInfo.languages.join(', ')}
-      - Tools: ${developerInfo.tools.join(', ')}
-      - Availability: ${developerInfo.availability}
-      - Hobbies: ${developerInfo.hobbies.join(', ')}
-      - Social Media:
-        * GitHub: ${developerInfo.social.github}
-        * LinkedIn: ${developerInfo.social.linkedin}
-        * Facebook: ${developerInfo.social.facebook}
-        * Fiverr: ${developerInfo.social.fiverr}
-        * Portfolio: ${developerInfo.social.portfolio}
-
-      IMPORTANT LINKS:
-      - Mighty Strikers Live: ${developerInfo.projects[0].liveLink}
-      - Mighty Strikers GitHub: ${developerInfo.projects[0].githubLink}
-      - Mighty Strikers Details: ${developerInfo.projects[0].detailsLink}
-      - Programming Hero Certificate: CERTIFICATE_LINK_PROGRAMMING_HERO
-      - NSDA Certificate: CERTIFICATE_LINK_NSDA
-      - Recommendation Letter: RECOMMENDATION_LINK
-
-      RECOMMENDATION LETTER DETAILS:
-      - I have a strong recommendation letter from Programming Hero
-      - It recognizes my outstanding performance in their web development course
-      - Highlights my exceptional problem-solving skills and dedication
-      - Commends my technical capabilities and potential
-      - Issued in 2025 by Programming Hero
-      - You can view it at: RECOMMENDATION_LINK
-
-      IMPORTANT FORMATTING INSTRUCTIONS:
-      - When mentioning URLs or emails, ALWAYS include the full URL or email address in your response
-      - For certificates, use the placeholder format: CERTIFICATE_LINK_PLATFORM_NAME
-      - For recommendation letter, use: RECOMMENDATION_LINK
-      - For Mighty Strikers project, always mention it's built with Next.js and include the live link
-      - For GitHub, always include: ${developerInfo.social.github}
-      - For LinkedIn, always include: ${developerInfo.social.linkedin}
-      - For Facebook, always include: ${developerInfo.social.facebook}
-      - For Fiverr, always include: ${developerInfo.social.fiverr}
-      - For Portfolio, always include: ${developerInfo.social.portfolio}
-      - For Email, always include: ${developerInfo.email}
-      - For WhatsApp, always include: ${developerInfo.whatsapp}
-
-      CRITICAL URL FORMATTING:
-      - When including URLs in your response, make sure they are separated by spaces and don't include trailing commas or periods
-      - Example: "You can find me on GitHub at ${developerInfo.social.github} and check my recommendation letter at RECOMMENDATION_LINK"
-      - BAD: "Visit ${developerInfo.social.github}, and RECOMMENDATION_LINK."
-      - GOOD: "Visit ${developerInfo.social.github} and RECOMMENDATION_LINK"
-
       Answer questions about Udoy professionally and helpfully. Keep responses concise but informative (2-4 sentences). 
-      Be enthusiastic but professional. If asked about something not in the provided information, politely redirect to what you can discuss.
-
-      When someone asks about achievements or certificates, mention:
-      - Programming Hero certificate (CERTIFICATE_LINK_PROGRAMMING_HERO)
-      - NSDA certificate (CERTIFICATE_LINK_NSDA)
-      - Recommendation letter from Programming Hero (RECOMMENDATION_LINK)
-
-      When someone asks specifically about recommendation letters or references, provide details about the Programming Hero recommendation letter.
-
-      Example responses:
-      - "I have completed the Programming Hero web development course and you can view my certificate at CERTIFICATE_LINK_PROGRAMMING_HERO and my recommendation letter at RECOMMENDATION_LINK"
-      - "My achievements include completing the Programming Hero course CERTIFICATE_LINK_PROGRAMMING_HERO, NSDA certification CERTIFICATE_LINK_NSDA, and a strong recommendation letter from Programming Hero RECOMMENDATION_LINK"
-      - "I have a recommendation letter from Programming Hero that highlights my outstanding performance, problem-solving skills, and technical capabilities. You can view it at RECOMMENDATION_LINK"
-      - "I specialize in MERN stack development and have built several projects including Mighty Strikers, a cricket platform built with Next.js..."
-      - "My experience includes 2+ years working with React and Node.js, and I recently built Mighty Strikers using Next.js..."
-      - "I'm currently available for freelance projects and would love to discuss opportunities. Check out my Mighty Strikers project at ${developerInfo.projects[0].liveLink}"
-      - "You can find me on GitHub at ${developerInfo.social.github} and see my Programming Hero certificate at CERTIFICATE_LINK_PROGRAMMING_HERO and recommendation letter at RECOMMENDATION_LINK"
-      - "I studied at Dhaka College and completed my BSc in Mathematics there while building projects like Mighty Strikers and earning certifications from Programming Hero CERTIFICATE_LINK_PROGRAMMING_HERO and NSDA CERTIFICATE_LINK_NSDA, plus a recommendation letter RECOMMENDATION_LINK"`;
+      Be enthusiastic but professional. If asked about something not in the provided information, politely redirect to what you can discuss.`;
 
       const completion = await groq.chat.completions.create({
         messages: [
@@ -457,7 +358,7 @@ const Hero = () => {
     } catch (error) {
       console.error('Error calling Groq API:', error);
 
-      const errorResponse = "I'm sorry, I'm having trouble connecting right now. Please try again later or check out my resume for more information!";
+      const errorResponse = "I'm sorry, I'm having trouble connecting right now. Here's what I can tell you:\n\n" + getStaticResponse(userInput);
       const errorMessageId = Date.now() + 1;
 
       typeMessage(errorResponse, errorMessageId, () => {
@@ -470,8 +371,86 @@ const Hero = () => {
         setChatMessages(prev => [...prev, errorMessage]);
         setTypingMessage('');
         setIsLoading(false);
+        setHasGroqError(true);
       });
     }
+  };
+
+  // Static responses for when API is not available
+  const getStaticResponse = (question) => {
+    const lowerQuestion = question.toLowerCase();
+    
+    if (lowerQuestion.includes('certificate') || lowerQuestion.includes('achievement')) {
+      return `I have several achievements:
+      
+      1. Programming Hero Certificate - Completed comprehensive web development course
+      🔗 https://drive.google.com/file/d/1Qa7Xyx-lOn6JfPmG5EzlyTYj9kzz64z9/view?usp=drive_link
+      
+      2. NSDA Certificate - Certification in software development and algorithms
+      🔗 https://drive.google.com/file/d/1pOIytWLfQ7KZLyiXvhNYGexRU9GHNz8V/view?usp=drive_link
+      
+      3. Recommendation Letter from Programming Hero - Recognizes my outstanding performance, dedication, and technical skills
+      🔗 https://drive.google.com/file/d/1HK_2EhwGuGfiaNsKaC1twq-MVER1LW2v/view?usp=sharing`;
+    }
+    
+    if (lowerQuestion.includes('recommendation')) {
+      return `Yes! I have a strong recommendation letter from Programming Hero that highlights:
+      • Outstanding performance in web development course
+      • Exceptional problem-solving skills
+      • Strong dedication and commitment
+      • Excellent technical capabilities
+      • Great potential for software development career
+      
+      You can view it here: https://drive.google.com/file/d/1HK_2EhwGuGfiaNsKaC1twq-MVER1LW2v/view?usp=sharing`;
+    }
+    
+    if (lowerQuestion.includes('available') || lowerQuestion.includes('work')) {
+      return `Yes, I'm currently available for freelance projects and full-time opportunities! I have 2+ years of experience with MERN stack and Next.js. You can reach me at:
+      
+      📧 Email: sharifulislamudoy56@gmail.com
+      📱 WhatsApp: https://wa.me/8801995322033
+      💼 Fiverr: https://www.fiverr.com/sharifulislam_u`;
+    }
+    
+    if (lowerQuestion.includes('social') || lowerQuestion.includes('link')) {
+      return `Here are my social media links:
+      
+      • GitHub: https://github.com/sharifulislamudoy
+      • LinkedIn: https://linkedin.com/in/shariful-islam-udoy
+      • Portfolio: https://shariful-islam-udoy.vercel.app
+      • Facebook: https://www.facebook.com/sharifulislamudoy56/
+      • Fiverr: https://www.fiverr.com/sharifulislam_u`;
+    }
+    
+    if (lowerQuestion.includes('skill') || lowerQuestion.includes('technology')) {
+      return `I specialize in:
+      • Frontend: React.js, Next.js, TypeScript, Tailwind CSS, Redux Toolkit
+      • Backend: Node.js, Express.js, MongoDB
+      • Languages: JavaScript, TypeScript, Python, Java
+      • Tools: Git, Docker, VS Code, Postman, Figma
+      
+      Check out my Mighty Strikers project: https://mighty-strikers.vercel.app/`;
+    }
+    
+    if (lowerQuestion.includes('project')) {
+      return `My flagship project is Mighty Striker - a cricket platform built with Next.js:
+      • Live scores and player statistics
+      • Built with Next.js, React, Tailwind CSS
+      • Live Demo: https://mighty-strikers.vercel.app/
+      • GitHub: https://github.com/sharifulislamudoy/mighty-strikers
+      
+      I've also built other projects using MERN stack and various web technologies.`;
+    }
+    
+    return `I'm Shariful Islam Udoy, a Full Stack Developer specializing in MERN stack and Next.js. I have 2+ years of experience, currently studying Mathematics at Dhaka College.
+    
+    Skills: React.js, Next.js, Node.js, MongoDB, Express.js
+    Available for freelance work!
+    
+    Contact me:
+    📧 sharifulislamudoy56@gmail.com
+    📱 https://wa.me/8801995322033
+    🌐 https://shariful-islam-udoy.vercel.app`;
   };
 
   const handleKeyPress = (e) => {
@@ -488,6 +467,8 @@ const Hero = () => {
     "Do you have a recommendation letter?",
     "Are you available for work?",
     "What are your social media links?",
+    "Tell me about your skills",
+    "What projects have you built?"
   ];
 
   const handleQuickQuestion = (question) => {
@@ -506,7 +487,7 @@ const Hero = () => {
       transition={{ duration: 1 }}
       className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20"
     >
-      <div className='flex flex-col lg:flex-row items-center w-11/12 mx-auto lg:px-13'>
+      <div className='flex flex-col lg:flex-row justify-between items-center  xl:mt-20 w-11/12 mx-auto lg:px-13'>
         {/* Left Side - Content */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -597,7 +578,9 @@ const Hero = () => {
               <div className="w-3 h-3 bg-green-500 rounded-full"></div>
               <Bot className="text-green-400" size={20} />
               <div className="text-gray-200 text-sm font-semibold">Udoy's AI Assistant</div>
-              <div className="ml-auto text-xs text-gray-400">Online</div>
+              <div className="ml-auto text-xs text-gray-400">
+                {hasGroqError ? 'Limited Mode' : 'Online'}
+              </div>
             </div>
 
             {/* Chat Messages */}
@@ -626,8 +609,8 @@ const Hero = () => {
                     ? 'bg-gray-800 text-gray-200 rounded-tl-none'
                     : 'bg-blue-600 text-white rounded-tr-none'
                     }`}>
-                    <p className="text-sm leading-relaxed">
-                      {message.isBot ? renderTextWithEmailAndLinks(message.text) : message.text}
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                      {message.text}
                     </p>
                     <div className={`text-xs mt-1 ${message.isBot ? 'text-gray-400' : 'text-blue-200'
                       }`}>
@@ -648,8 +631,8 @@ const Hero = () => {
                     <Bot size={16} />
                   </div>
                   <div className="bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-[80%]">
-                    <p className="text-sm leading-relaxed text-gray-200">
-                      {renderTextWithEmailAndLinks(typingMessage)}
+                    <p className="text-sm leading-relaxed text-gray-200 whitespace-pre-wrap">
+                      {typingMessage}
                       <span className="animate-pulse">|</span>
                     </p>
                   </div>
@@ -669,6 +652,13 @@ const Hero = () => {
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* API Key Missing Warning - Only show if no messages yet */}
+              {!hasInitialized && !hasGroqError && (
+                <div className="text-center text-gray-500 text-sm py-4">
+                  Initializing AI assistant...
                 </div>
               )}
 
@@ -701,7 +691,7 @@ const Hero = () => {
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about my skills, experience, projects, certificates, recommendation letter..."
+                  placeholder="Ask about my skills, experience, projects, certificates..."
                   className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   disabled={isLoading || isTyping}
                 />
@@ -713,6 +703,11 @@ const Hero = () => {
                   <Send size={16} />
                 </button>
               </div>
+              {hasGroqError && (
+                <div className="text-xs text-yellow-500 mt-2 text-center">
+                  ⚠️ Using static responses. Add GROQ_API_KEY for full AI functionality.
+                </div>
+              )}
             </div>
           </div>
         </motion.div>

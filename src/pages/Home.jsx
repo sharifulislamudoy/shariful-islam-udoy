@@ -10,6 +10,7 @@ import Education from '../components/Home/Education';
 import Contact from '../components/Home/Contact';
 import MessageButton from '../components/Home/MessageButton';
 import Achievements from '../components/Home/Achievments';
+import ContactLocationSection from '../components/Home/ContactLocationSection';
 
 
 
@@ -38,7 +39,7 @@ const Home = () => {
             <Experience key="experience" />
             <Education key="education" />
             <Achievements key="achievement" />
-            <Contact key="contact" />
+            <ContactLocationSection key="contact" />
             <MessageButton />
           </>
         )}
