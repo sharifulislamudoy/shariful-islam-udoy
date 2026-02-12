@@ -7,7 +7,6 @@ import Skills from '../components/Home/Skills';
 import Experience from '../components/Home/Experience';
 import Projects from '../components/Home/Projects';
 import Education from '../components/Home/Education';
-import Contact from '../components/Home/Contact';
 import MessageButton from '../components/Home/MessageButton';
 import Achievements from '../components/Home/Achievments';
 import ContactLocationSection from '../components/Home/ContactLocationSection';
