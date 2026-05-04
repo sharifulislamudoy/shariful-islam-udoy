@@ -59,7 +59,7 @@ const Projects = () => {
 
     if (loading) {
         return (
-            <section className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+            <section className="py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
                 <div className="text-center">
                     <RefreshCw size={48} className="text-blue-400 animate-spin mx-auto mb-4" />
                     <p className="text-gray-400 text-xl">Loading projects...</p>
@@ -70,7 +70,7 @@ const Projects = () => {
 
     return (
         <motion.section id="projects" ref={ref} initial="hidden" animate={inView ? "visible" : "hidden"} variants={containerVariants}
-            className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900">
+            className="py-35 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900">
             <div className="w-11/12 mx-auto">
                 <motion.div variants={itemVariants} className="text-center mb-16">
                     <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }}

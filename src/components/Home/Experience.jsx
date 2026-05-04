@@ -19,12 +19,6 @@ const Experience = () => {
         triggerOnce: true
     });
 
-//     const [experiences, setExperiences] = useState([]);
-
-//     useEffect(() => {
-//     fetchExperiences();
-// }, []);
-
     const experiences = [
         {
             id: 1,
@@ -113,7 +107,7 @@ const Experience = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="min-h-screen py-20 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900"
+            className="py-35 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900"
         >
             <div className="w-11/12 mx-auto">
                 {/* Section Header */}

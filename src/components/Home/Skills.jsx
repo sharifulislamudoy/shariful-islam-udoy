@@ -83,7 +83,7 @@ const Skills = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="py-16 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-t border-gray-800"
+            className="py-35 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-t border-gray-800"
         >
             <div className="w-11/12 mx-auto">
                 {/* Section Header */}
