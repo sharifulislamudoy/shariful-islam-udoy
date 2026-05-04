@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
@@ -50,17 +50,22 @@ const AboutMe = () => {
         }
     };
 
-    const imageVariants = {
-        hidden: { opacity: 0, scale: 0.8, rotate: -5 },
-        visible: {
+    // Circle drawing animation values
+    const radius = 158; // Matches w-80 (320px) minus stroke width
+    const circumference = 2 * Math.PI * radius;
+
+    // Animation for floating elements (delayed until after circle drawing)
+    const floatItemVariants = {
+        hidden: { opacity: 0, scale: 0.5 },
+        visible: (custom) => ({
             opacity: 1,
             scale: 1,
-            rotate: 0,
             transition: {
-                duration: 0.8,
+                delay: custom || 0,
+                duration: 0.6,
                 ease: "easeOut"
             }
-        }
+        })
     };
 
     return (
@@ -98,87 +103,91 @@ const AboutMe = () => {
                 </motion.div>
 
                 <div className="flex flex-col lg:flex-row gap-12 items-center">
-                    {/* Left Side - Image */}
+                    {/* Left Side - Image with Clock Reveal */}
                     <motion.div
-                        variants={imageVariants}
                         className="lg:w-2/5 flex justify-center"
+                        variants={itemVariants}
                     >
                         <div className="relative">
-                            {/* Main Image Container */}
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                transition={{ type: "spring", stiffness: 300 }}
-                                className="relative z-10"
-                            >
-                                <div className="w-80 h-80 rounded-full overflow-hidden border-4 border-blue-500/20 shadow-2xl">
-                                    <img
-                                        src="/udoy-image.jpg"
-                                        alt="Shariful Islam Udoy"
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            e.target.nextSibling.style.display = 'block';
-                                        }}
-                                    />
-                                    {/* Fallback placeholder */}
-                                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center hidden">
-                                        <div className="text-white text-center">
-                                            <div className="text-4xl font-bold mb-2">SU</div>
-                                            <div className="text-sm">Shariful Islam Udoy</div>
-                                        </div>
+                            {/* Main Image Container (no border, replaced by SVG stroke) */}
+                            <div className="relative z-10 w-80 h-80 rounded-full overflow-hidden shadow-2xl">
+                                {/* Image (initially hidden, fades in after circle starts drawing) */}
+                                <motion.img
+                                    src="/udoy-image.jpg"
+                                    alt="Shariful Islam Udoy"
+                                    className="w-full h-full object-cover"
+                                    initial={{ opacity: 0 }}
+                                    animate={inView ? { opacity: 1 } : { opacity: 0 }}
+                                    transition={{ delay: 0.8, duration: 0.8 }}
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'block';
+                                    }}
+                                />
+                                {/* Fallback placeholder */}
+                                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center hidden">
+                                    <div className="text-white text-center">
+                                        <div className="text-4xl font-bold mb-2">SU</div>
+                                        <div className="text-sm">Shariful Islam Udoy</div>
                                     </div>
                                 </div>
 
-                                {/* Floating Elements */}
-                                <motion.div
-                                    animate={{
-                                        y: [0, -10, 0],
-                                        rotate: [0, 5, 0]
-                                    }}
-                                    transition={{
-                                        duration: 4,
-                                        repeat: Infinity,
-                                        ease: "easeInOut"
-                                    }}
-                                    className="absolute -top-4 -right-4 bg-blue-500 rounded-lg p-3 shadow-lg"
+                                {/* SVG Circle Overlay for Clockwise Drawing */}
+                                <svg
+                                    className="absolute inset-0 w-full h-full"
+                                    viewBox="0 0 320 320"
                                 >
-                                    <Code className="text-white" size={20} />
-                                </motion.div>
+                                    <defs>
+                                        <linearGradient id="clockGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#3b82f6" /> {/* blue-500 */}
+                                            <stop offset="100%" stopColor="#06b6d4" /> {/* cyan-500 */}
+                                        </linearGradient>
+                                    </defs>
+                                    <circle
+                                        cx="160"
+                                        cy="160"
+                                        r={radius}
+                                        fill="none"
+                                        stroke="url(#clockGradient)"
+                                        strokeWidth="4"
+                                        strokeLinecap="round"
+                                        // Start drawing from 12 o'clock (rotate -90deg)
+                                        transform="rotate(-90 160 160)"
+                                        strokeDasharray={circumference}
+                                        strokeDashoffset={inView ? 0 : circumference}
+                                        style={{
+                                            transition: 'stroke-dashoffset 1.5s ease-in-out 0.2s'
+                                        }}
+                                    />
+                                </svg>
+                            </div>
 
-                                <motion.div
-                                    animate={{
-                                        y: [0, -15, 0],
-                                        rotate: [0, -5, 0]
-                                    }}
-                                    transition={{
-                                        duration: 5,
-                                        repeat: Infinity,
-                                        ease: "easeInOut",
-                                        delay: 1
-                                    }}
-                                    className="absolute -bottom-4 -left-4 bg-cyan-500 rounded-lg p-3 shadow-lg"
-                                >
-                                    <Database className="text-white" size={20} />
-                                </motion.div>
+                            {/* Floating Elements (delayed animation) */}
+                            <motion.div
+                                custom={1.5}
+                                variants={floatItemVariants}
+                                initial="hidden"
+                                animate={inView ? "visible" : "hidden"}
+                                className="absolute -top-4 -right-4 bg-blue-500 rounded-lg p-3 shadow-lg z-20"
+                            >
+                                <Code className="text-white" size={20} />
                             </motion.div>
 
-                            {/* Background Glow */}
                             <motion.div
-                                animate={{
-                                    opacity: [0.3, 0.6, 0.3],
-                                    scale: [1, 1.1, 1]
-                                }}
-                                transition={{
-                                    duration: 3,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                }}
-                                className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl blur-xl -z-10"
-                            />
+                                custom={1.8}
+                                variants={floatItemVariants}
+                                initial="hidden"
+                                animate={inView ? "visible" : "hidden"}
+                                className="absolute -bottom-4 -left-4 bg-cyan-500 rounded-lg p-3 shadow-lg z-20"
+                            >
+                                <Database className="text-white" size={20} />
+                            </motion.div>
                         </div>
+
+
                     </motion.div>
 
-                    {/* Right Side - Content */}
+                    {/* Right Side - Content (unchanged) */}
                     <motion.div
                         variants={containerVariants}
                         className="lg:w-3/5"
@@ -218,7 +227,7 @@ const AboutMe = () => {
                         </motion.div>
 
                         {/* Personal Info */}
-                        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
                             <motion.div
                                 whileHover={{ scale: 1.02 }}
                                 className="flex items-center gap-3 text-gray-300"
