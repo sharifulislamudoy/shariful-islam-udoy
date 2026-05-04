@@ -11,8 +11,6 @@ import MessageButton from '../components/Home/MessageButton';
 import Achievements from '../components/Home/Achievments';
 import ContactLocationSection from '../components/Home/ContactLocationSection';
 
-
-
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,25 +18,32 @@ const Home = () => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 3500);
-
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="overflow-hidden bg-black text-slate-50 mt-10">
+    <div className="bg-black text-slate-50 mt-10">
       <AnimatePresence mode="wait">
         {isLoading ? (
           <LoadingSpinner key="loading" />
         ) : (
           <>
-            <Hero key="hero" />
-            <AboutMe key="about"/>
-            <Skills key="skills" />
-            <Projects key="projects" />
-            <Experience key="experience" />
-            <Education key="education" />
-            <Achievements key="achievement" />
-            <ContactLocationSection key="contact" />
+            {/* Hero is sticky — stays fixed while About scrolls over it */}
+            <div className="sticky top-0 z-0">
+              <Hero key="hero" />
+            </div>
+
+            {/* About section slides up over Hero */}
+            <div className="relative z-10">
+              <AboutMe key="about" />
+              <Skills key="skills" />
+              <Projects key="projects" />
+              <Experience key="experience" />
+              <Education key="education" />
+              <Achievements key="achievement" />
+              <ContactLocationSection key="contact" />
+            </div>
+
             <MessageButton />
           </>
         )}

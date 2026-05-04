@@ -70,7 +70,8 @@ const AboutMe = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="py-35 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 mb-10"
+            className="py-35 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative"
+            style={{ boxShadow: '0 -20px 60px rgba(0,0,0,0.8)' }}
         >
             <div className="w-11/12 mx-auto">
                 {/* Section Header */}
