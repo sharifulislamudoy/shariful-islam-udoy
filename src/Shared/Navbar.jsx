@@ -134,7 +134,7 @@ const Navbar = () => {
                 Shariful
               </span>
               <span className="text-cyan-400 text-sm font-medium">
-                MERN Stack
+                Full Stack Developer
               </span>
             </div>
           </motion.div>
