@@ -2,9 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
+    Layout,
     Server,
-    Cpu,
-    Layout
+    Database,
+    GitBranch,
+    Cloud,
+    Sparkles
 } from 'lucide-react';
 
 const Skills = () => {
@@ -17,20 +20,46 @@ const Skills = () => {
         {
             title: "Frontend Development",
             icon: Layout,
-            skills: ["React.js", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "HTML5", "CSS3", "Redux"],
+            skills: ["HTML5", "CSS3", "JavaScript", "Tailwind CSS", "React.js", "Redux", "Next.js", "TypeScript"],
             color: "from-blue-500 to-cyan-500"
         },
         {
             title: "Backend Development",
             icon: Server,
-            skills: ["Node.js", "Express.js", "MongoDB", "REST APIs", "JWT", "Socket.io"],
+            skills: ["Node.js", "Express.js", "RESTful APIs", "Prisma ORM"],
             color: "from-green-500 to-emerald-500"
         },
         {
-            title: "Tools & Technologies",
-            icon: Cpu,
-            skills: ["Git", "Docker", "VS Code", "Postman", "Figma", "Webpack", "Vite"],
-            color: "from-purple-500 to-pink-500"
+            title: "Database",
+            icon: Database,
+            skills: ["MongoDB", "PostgreSQL"],
+            color: "from-indigo-500 to-purple-500"
+        },
+        {
+            title: "Tools & Version Control",
+            icon: GitBranch,
+            skills: ["Git", "GitHub", "VS Code"],
+            color: "from-orange-500 to-amber-500"
+        },
+        {
+            title: "Deployment & Hosting",
+            icon: Cloud,
+            skills: ["Firebase Hosting", "Vercel", "Netlify", "Render", "Hostinger"],
+            color: "from-teal-500 to-blue-500"
+        },
+        {
+            title: "Other Technologies & Integrations",
+            icon: Sparkles,
+            skills: [
+                "Firebase Auth",
+                "JWT",
+                "Socket.io",
+                "Framer Motion",
+                "Stripe Payments",
+                "Cloudinary",
+                "External APIs"
+            ],
+            color: "from-pink-500 to-rose-500"
         }
     ];
 
@@ -83,9 +112,9 @@ const Skills = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="py-35 lg:px-13 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-t border-gray-800"
+            className="py-20 lg:py-28 px-4 md:px-8 lg:px-16 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-t border-gray-800"
         >
-            <div className="w-11/12 mx-auto">
+            <div className="max-w-7xl mx-auto">
                 {/* Section Header */}
                 <motion.div
                     variants={itemVariants}
