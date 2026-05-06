@@ -3,13 +3,14 @@ import { AnimatePresence } from 'framer-motion';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Hero from '../components/Home/Hero';
 import AboutMe from '../components/Home/AboutMe';
-import Skills from '../components/Home/Skills';
+
 import Experience from '../components/Home/Experience';
 import Projects from '../components/Home/Projects';
 import Education from '../components/Home/Education';
 import MessageButton from '../components/Home/MessageButton';
 import Achievements from '../components/Home/Achievments';
 import ContactLocationSection from '../components/Home/ContactLocationSection';
+import SkillSection from '../components/Home/Skills';
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +37,7 @@ const Home = () => {
             {/* About section slides up over Hero */}
             <div className="relative z-10">
               <AboutMe key="about" />
-              <Skills key="skills" />
+              <SkillSection key="skills" />
               <Projects key="projects" />
               <Experience key="experience" />
               <Education key="education" />

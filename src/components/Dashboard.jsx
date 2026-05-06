@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, FolderOpen, Plus, Edit, Trash2, Home, LogOut, X, RefreshCw, Github, ExternalLink, Calendar, MapPin, Award } from 'lucide-react';
+import { Briefcase, FolderOpen, Plus, Edit, Trash2, Home, LogOut, X, RefreshCw, Github, ExternalLink, Calendar, MapPin, Award, Upload, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import CustomCursor from './Custom-Cursor/CustomCursor';
 
@@ -9,10 +9,10 @@ const AdminDashboard = () => {
     const [stats, setStats] = useState({ totalProjects: 0, totalExperience: 0 });
     const navigate = useNavigate();
 
-    // ✅ Returns the raw ADMIN_SECRET — what the server actually checks
+    // Returns the raw ADMIN_SECRET — what the server actually checks
     const getAdminToken = () => localStorage.getItem('adminToken') || import.meta.env.VITE_ADMIN_SECRET;
 
-    // ✅ Guard: redirect to login if token is missing or expired
+    // Guard: redirect to login if token is missing or expired
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
         const expiry = localStorage.getItem('adminTokenExpiry');
@@ -242,6 +242,116 @@ const TechnologyInput = ({ technologies, setTechnologies }) => {
     );
 };
 
+// Cloudinary upload component (unsigned preset)
+const ScreenshotUploader = ({ screenshots, onScreenshotsChange }) => {
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = 'react_unsigned';
+    const folder = 'dohhfubsa';
+
+    const uploadToCloudinary = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', uploadPreset);
+        formData.append('folder', folder);
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error?.message || 'Upload failed');
+        }
+        const data = await response.json();
+        return data.secure_url;
+    };
+
+    const handleFileSelect = async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        if (files.length > 20) {
+            alert('You can upload up to 20 images at once.');
+            return;
+        }
+
+        setUploading(true);
+        setUploadProgress({ current: 0, total: files.length });
+        const newUrls = [];
+
+        for (let i = 0; i < files.length; i++) {
+            try {
+                const url = await uploadToCloudinary(files[i]);
+                newUrls.push(url);
+                setUploadProgress({ current: i + 1, total: files.length });
+            } catch (err) {
+                console.error(`Failed to upload ${files[i].name}:`, err);
+                alert(`Error uploading ${files[i].name}: ${err.message}`);
+            }
+        }
+
+        if (newUrls.length > 0) {
+            // Append new URLs to existing screenshots
+            const updated = [...screenshots, ...newUrls];
+            onScreenshotsChange(updated);
+        }
+        setUploading(false);
+        setUploadProgress({ current: 0, total: 0 });
+        // Clear file input
+        e.target.value = '';
+    };
+
+    const removeScreenshot = (index) => {
+        const updated = screenshots.filter((_, i) => i !== index);
+        onScreenshotsChange(updated);
+    };
+
+    return (
+        <div className="space-y-3">
+            <div className="flex items-center gap-3 flex-wrap">
+                <label className="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg flex items-center gap-2 transition-colors">
+                    <Upload size={18} />
+                    Select Images (max 20)
+                    <input type="file" multiple accept="image/*" className="hidden" onChange={handleFileSelect} disabled={uploading} />
+                </label>
+                {uploading && (
+                    <div className="flex items-center gap-2 text-gray-300">
+                        <RefreshCw className="animate-spin" size={16} />
+                        <span>Uploading... {uploadProgress.current}/{uploadProgress.total}</span>
+                    </div>
+                )}
+            </div>
+            {screenshots.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                    {screenshots.map((url, idx) => (
+                        <div key={idx} className="relative group">
+                            <img src={url} alt={`Screenshot ${idx + 1}`} className="w-full h-24 object-cover rounded-lg border border-gray-600" />
+                            <button
+                                type="button"
+                                onClick={() => removeScreenshot(idx)}
+                                className="absolute top-1 right-1 bg-red-600 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                                <X size={14} className="text-white" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+            <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Or paste image URLs (one per line)</label>
+                <textarea
+                    placeholder="https://example.com/screenshot1.png"
+                    rows={3}
+                    value={screenshots.join('\n')}
+                    onChange={(e) => onScreenshotsChange(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))}
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400"
+                />
+            </div>
+        </div>
+    );
+};
+
 const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
     const [formData, setFormData] = useState({
         title: '', description: '', detailedDescription: '', technologies: [], category: 'Full Stack',
@@ -326,13 +436,16 @@ const ProjectForm = ({ project, onSave, onCancel, getAdminToken }) => {
                     <input type="url" placeholder="Live Demo URL" value={formData.liveUrl} onChange={e => setFormData({ ...formData, liveUrl: e.target.value })}
                         className="px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400" />
                 </div>
+
+                {/* Screenshots with Cloudinary upload */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Screenshot URLs (one per line)</label>
-                    <textarea placeholder="https://example.com/screenshot1.png" rows="3"
-                        value={formData.screenshots.join('\n')}
-                        onChange={e => setFormData({ ...formData, screenshots: e.target.value.split('\n').map(s => s.trim()).filter(Boolean) })}
-                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400" />
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Screenshots</label>
+                    <ScreenshotUploader
+                        screenshots={formData.screenshots}
+                        onScreenshotsChange={(newScreenshots) => setFormData({ ...formData, screenshots: newScreenshots })}
+                    />
                 </div>
+
                 <div className="flex justify-end gap-3 pt-4">
                     <button type="button" onClick={onCancel} className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">Cancel</button>
                     <button type="submit" className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">

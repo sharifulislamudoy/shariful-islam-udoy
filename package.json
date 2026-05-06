@@ -12,7 +12,7 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@tailwindcss/vite": "^4.1.13",
-    "framer-motion": "^12.23.22",
+    "framer-motion": "^12.38.0",
     "groq-sdk": "^0.33.0",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.22",
