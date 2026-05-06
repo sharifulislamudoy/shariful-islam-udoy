@@ -23,7 +23,6 @@ const Hero = () => {
     "React.js Specialist"
   ];
 
-
   // Helper: Convert URLs to clickable links
   const formatMessageWithLinks = (text) => {
     if (!text) return text;
@@ -202,21 +201,21 @@ const Hero = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20"
+      className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-8 md:py-12 lg:py-20"
     >
-      <div className='flex flex-col lg:flex-row justify-between items-center xl:mt-20 w-11/12 mx-auto lg:px-13'>
+      <div className="flex flex-col lg:flex-row justify-between items-center lg:gap-8 w-11/12  mx-auto px-4 lg:px-13 xl:mt-20 mt-10">
         {/* Left side: Hero content */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="lg:w-1/2 text-left mb-12 lg:mb-0"
+          className="lg:w-1/2 text-left mb-8 lg:mb-0"
         >
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+            className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4"
           >
             <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               Shariful Islam Udoy
@@ -227,7 +226,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-xl md:text-2xl lg:text-3xl mb-6 text-gray-300 font-mono min-h-[60px]"
+            className="text-lg md:text-2xl lg:text-3xl lg:mb-6 text-gray-300 font-mono min-h-[60px]"
           >
             <span className="text-blue-400">{displayText}</span>
             <span className="animate-pulse">|</span>
@@ -237,7 +236,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="text-lg md:text-xl text-gray-400 mb-8 leading-relaxed max-w-2xl"
+            className="text-base md:text-lg lg:text-xl text-gray-400 mb-6 leading-relaxed max-w-2xl mx-auto lg:mx-0"
           >
             Passionate about creating innovative web solutions using modern technologies.
             Specializing in MERN stack and Next.js to build scalable applications.
@@ -250,7 +249,7 @@ const Hero = () => {
             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(59, 130, 246, 0.3)' }}
             whileTap={{ scale: 0.95 }}
             onClick={downloadResume}
-            className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-md rounded-lg cursor-pointer flex items-center gap-3 font-semibold"
+            className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm md:text-md rounded-lg cursor-pointer flex items-center gap-3 font-semibold mx-auto lg:mx-0 w-fit"
           >
             <Download size={20} />
             Download Resume
@@ -260,11 +259,11 @@ const Hero = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1.2 }}
-            className="flex gap-6 mt-8"
+            className="flex gap-4 md:gap-6 justify-center lg:justify-start mt-8"
           >
             {[Code, Database, Palette, Rocket].map((Icon, index) => (
-              <motion.div key={index} whileHover={{ scale: 1.2, rotate: 5 }} className="p-3 bg-gray-800 rounded-lg">
-                <Icon className="text-blue-400" size={24} />
+              <motion.div key={index} whileHover={{ scale: 1.2, rotate: 5 }} className="p-2 md:p-3 bg-gray-800 rounded-lg">
+                <Icon className="text-blue-400" size={20} />
               </motion.div>
             ))}
           </motion.div>
@@ -277,7 +276,7 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="lg:w-1/2 w-full max-w-2xl"
         >
-          <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700 h-[500px] flex flex-col">
+          <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700 h-[450px] md:h-[500px] flex flex-col">
             {/* Chat Header */}
             <div className="bg-gray-800 px-4 py-3 flex items-center gap-3 border-b border-gray-700">
               <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -304,8 +303,7 @@ const Hero = () => {
                     {message.isBot ? <Bot size={16} /> : <User size={16} />}
                   </div>
                   <div className={`max-w-[80%] rounded-lg p-3 ${message.isBot ? 'bg-gray-800 text-gray-200 rounded-tl-none' : 'bg-blue-600 text-white rounded-tr-none'}`}>
-                    {/* 🔥 Render message with clickable links (bot only) */}
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
                       {message.isBot ? formatMessageWithLinks(message.text) : message.text}
                     </p>
                     <div className={`text-xs mt-1 ${message.isBot ? 'text-gray-400' : 'text-blue-200'}`}>
@@ -315,14 +313,14 @@ const Hero = () => {
                 </motion.div>
               ))}
 
-              {/* Typing animation (plain text, no links yet) */}
+              {/* Typing animation */}
               {isTyping && typingMessage && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                     <Bot size={16} />
                   </div>
                   <div className="bg-gray-800 rounded-lg rounded-tl-none p-3 max-w-[80%]">
-                    <p className="text-sm leading-relaxed text-gray-200 whitespace-pre-wrap">
+                    <p className="text-sm leading-relaxed text-gray-200 whitespace-pre-wrap break-words">
                       {typingMessage}<span className="animate-pulse">|</span>
                     </p>
                   </div>
@@ -366,7 +364,7 @@ const Hero = () => {
             )}
 
             {/* Input Area */}
-            <div className="border-t border-gray-800 p-4">
+            <div className="border-t border-gray-800 p-3 md:p-4">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -374,13 +372,13 @@ const Hero = () => {
                   onChange={(e) => setUserInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about my skills, experience, projects..."
-                  className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 md:px-4 md:py-3 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm md:text-base"
                   disabled={isLoading || isTyping}
                 />
                 <button
                   onClick={sendMessage}
                   disabled={isLoading || isTyping || !userInput.trim()}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg px-6 py-3 transition-colors flex items-center gap-2"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg px-4 py-2 md:px-6 md:py-3 transition-colors flex items-center gap-2"
                 >
                   <Send size={16} />
                 </button>

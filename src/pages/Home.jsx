@@ -3,7 +3,6 @@ import { AnimatePresence } from 'framer-motion';
 import LoadingSpinner from '../Shared/LoadingSpinner';
 import Hero from '../components/Home/Hero';
 import AboutMe from '../components/Home/AboutMe';
-
 import Experience from '../components/Home/Experience';
 import Projects from '../components/Home/Projects';
 import Education from '../components/Home/Education';
@@ -23,7 +22,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-black text-slate-50 mt-10">
+    <div className="bg-black text-slate-50">
       <AnimatePresence mode="wait">
         {isLoading ? (
           <LoadingSpinner key="loading" />
@@ -34,8 +33,8 @@ const Home = () => {
               <Hero key="hero" />
             </div>
 
-            {/* About section slides up over Hero */}
-            <div className="relative z-10">
+            {/* About section slides up over Hero - bg-black ensures hero is hidden even before animations */}
+            <div className="relative z-10 bg-black">
               <AboutMe key="about" />
               <SkillSection key="skills" />
               <Projects key="projects" />
