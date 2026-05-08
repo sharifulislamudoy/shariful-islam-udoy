@@ -112,9 +112,9 @@ const Skills = () => {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             variants={containerVariants}
-            className="py-20 lg:py-28 px-4 md:px-8 lg:px-16 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-t border-gray-800"
+            className="py-20 lg:py-35 px-4 md:px-8 lg:px-14 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-t border-gray-800"
         >
-            <div className="max-w-7xl mx-auto">
+            <div className="w-11/12 mx-auto">
                 {/* Section Header */}
                 <motion.div
                     variants={itemVariants}
