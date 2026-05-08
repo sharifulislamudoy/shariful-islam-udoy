@@ -118,7 +118,7 @@ const Hero = () => {
 
   const downloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/resume.pdf';
+    link.href = '/Full.pdf';
     link.download = 'Shariful_Islam_Udoy_Resume.pdf';
     link.click();
   };
@@ -182,8 +182,6 @@ const Hero = () => {
   };
 
   const quickQuestions = [
-    "What certificates do you have?",
-    "Do you have a recommendation letter?",
     "Are you available for work?",
     "What are your skills?",
     "Tell me about your projects"
@@ -203,13 +201,13 @@ const Hero = () => {
       transition={{ duration: 1 }}
       className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-8 md:py-12 lg:py-20"
     >
-      <div className="flex flex-col lg:flex-row justify-between items-center lg:gap-8 w-11/12  mx-auto px-4 lg:px-13 xl:mt-20 mt-10">
+      <div className="flex flex-col lg:flex-row justify-between items-center lg:gap-8 w-11/12 mx-auto px-4 lg:px-13 xl:mt-20 mt-10">
         {/* Left side: Hero content */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="lg:w-1/2 text-left mb-8 lg:mb-0"
+          className="lg:w-1/2 text-left mb-8 lg:mb-0 mt-20"
         >
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -242,6 +240,7 @@ const Hero = () => {
             Specializing in MERN stack and Next.js to build scalable applications.
           </motion.p>
 
+          {/* Button: removed mx-auto and lg:mx-0 to keep left alignment on all screens */}
           <motion.button
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -249,17 +248,18 @@ const Hero = () => {
             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(59, 130, 246, 0.3)' }}
             whileTap={{ scale: 0.95 }}
             onClick={downloadResume}
-            className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm md:text-md rounded-lg cursor-pointer flex items-center gap-3 font-semibold mx-auto lg:mx-0 w-fit"
+            className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm md:text-md rounded-lg cursor-pointer flex gap-3 font-semibold w-fit"
           >
             <Download size={20} />
             Download Resume
           </motion.button>
 
+          {/* Icons container: changed justify-center to justify-start for left alignment */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1.2 }}
-            className="flex gap-4 md:gap-6 justify-center lg:justify-start mt-8"
+            className="flex gap-4 md:gap-6 justify-start mt-8"
           >
             {[Code, Database, Palette, Rocket].map((Icon, index) => (
               <motion.div key={index} whileHover={{ scale: 1.2, rotate: 5 }} className="p-2 md:p-3 bg-gray-800 rounded-lg">
@@ -274,7 +274,7 @@ const Hero = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="lg:w-1/2 w-full max-w-2xl"
+          className="lg:w-1/2 w-full max-w-2xl hidden lg:block"
         >
           <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700 h-[450px] md:h-[500px] flex flex-col">
             {/* Chat Header */}
