@@ -4,4 +4,176 @@
 body {
   background-color: black;
   font-family: "Poppins", sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: #000;
+}
+
+/* One continuous WebGL world lives behind the full portfolio. */
+.developer-world {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.immersive-portfolio {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 78% 16%, rgba(34, 211, 238, 0.08), transparent 27rem),
+    radial-gradient(circle at 18% 55%, rgba(59, 130, 246, 0.08), transparent 30rem),
+    #000;
+}
+
+.immersive-portfolio section[id] {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(17, 24, 39, 0.84), rgba(0, 0, 0, 0.72) 48%, rgba(17, 24, 39, 0.78)) !important;
+  border-top: 1px solid rgba(55, 65, 81, 0.45);
+  perspective: 1200px;
+}
+
+.immersive-portfolio section[id]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  transform: perspective(900px) rotateX(68deg) scale(1.65) translateY(34%);
+  transform-origin: bottom center;
+  mask-image: linear-gradient(to bottom, transparent 20%, black 78%);
+}
+
+.immersive-portfolio section[id]::after {
+  content: "";
+  position: absolute;
+  width: 42vw;
+  height: 42vw;
+  right: -17vw;
+  top: 12%;
+  border: 1px solid rgba(34, 211, 238, 0.12);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 60px rgba(59, 130, 246, 0.018),
+    0 0 0 120px rgba(34, 211, 238, 0.012);
+  pointer-events: none;
+  animation: section-orbit 16s linear infinite;
+}
+
+.immersive-portfolio section[id] > * {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-terminal-3d {
+  transform: perspective(1200px) rotateY(-2deg) rotateX(1deg);
+  transform-style: preserve-3d;
+  box-shadow:
+    -24px 28px 80px rgba(0, 0, 0, 0.55),
+    0 0 60px rgba(34, 211, 238, 0.08);
+  transition: transform 500ms ease, border-color 500ms ease;
+}
+
+.hero-terminal-3d:hover {
+  transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(-5px);
+  border-color: rgba(34, 211, 238, 0.48);
+}
+
+.pointer-hint {
+  position: absolute;
+  right: 4.5rem;
+  bottom: 2rem;
+  align-items: center;
+  gap: 0.55rem;
+  color: rgba(103, 232, 249, 0.72);
+  font: 500 0.66rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.15em;
+  z-index: 5;
+}
+
+.scene-status {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: rgba(165, 243, 252, 0.72);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  transform: rotate(90deg) translateX(50%);
+  transform-origin: right center;
+  pointer-events: none;
+}
+
+.scene-status__index {
+  color: #22d3ee;
+}
+
+.scene-status__line {
+  width: 2.75rem;
+  height: 1px;
+  background: linear-gradient(90deg, #3b82f6, #22d3ee);
+}
+
+.scroll-rail {
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 60;
+  width: 2px;
+  height: 100vh;
+  background: rgba(30, 41, 59, 0.4);
+  pointer-events: none;
+}
+
+.scroll-rail span {
+  display: block;
+  width: 100%;
+  background: linear-gradient(to bottom, #3b82f6, #22d3ee);
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.85);
+  transition: height 100ms linear;
+}
+
+@keyframes section-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1023px) {
+  .developer-world {
+    opacity: 0.5;
+  }
+
+  .immersive-portfolio section[id] {
+    background: linear-gradient(145deg, rgba(17, 24, 39, 0.88), rgba(0, 0, 0, 0.82)) !important;
+  }
+
+  .immersive-portfolio section[id]::before {
+    background-size: 48px 48px;
+    opacity: 0.13;
+  }
+
+  .scene-status {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .immersive-portfolio section[id]::after { animation: none; }
+  .hero-terminal-3d { transform: none; transition: none; }
 }

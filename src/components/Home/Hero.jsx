@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Code, Database, Palette, Rocket, Send, User, Bot } from 'lucide-react';
+import { Download, Code, Database, Palette, Rocket, Send, User, Bot, MousePointer2 } from 'lucide-react';
 
 const Hero = () => {
   const [displayText, setDisplayText] = useState('');
@@ -199,7 +199,7 @@ const Hero = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-8 md:py-12 lg:py-20"
+      className="min-h-screen bg-gradient-to-br from-gray-900/75 via-black/70 to-gray-900/75 py-8 md:py-12 lg:py-20 relative overflow-hidden"
     >
       <div className="flex flex-col lg:flex-row justify-between items-center lg:gap-8 w-11/12 mx-auto px-4 lg:px-13 xl:mt-20 mt-10">
         {/* Left side: Hero content */}
@@ -276,7 +276,7 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="lg:w-1/2 w-full max-w-2xl hidden lg:block"
         >
-          <div className="bg-gray-900 rounded-lg overflow-hidden shadow-2xl border border-gray-700 h-[450px] md:h-[500px] flex flex-col">
+          <div className="bg-gray-900/78 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl border border-cyan-500/20 h-[450px] md:h-[500px] flex flex-col hero-terminal-3d">
             {/* Chat Header */}
             <div className="bg-gray-800 px-4 py-3 flex items-center gap-3 border-b border-gray-700">
               <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -387,6 +387,16 @@ const Hero = () => {
           </div>
         </motion.div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5 }}
+        className="pointer-hint hidden lg:flex"
+      >
+        <MousePointer2 size={14} />
+        <span>MOVE POINTER · EXPLORE THE MODEL</span>
+      </motion.div>
     </motion.section>
   );
 };
